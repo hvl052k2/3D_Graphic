@@ -1,3 +1,4 @@
+import Stats from "./libs/stats.module.js";
 
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
