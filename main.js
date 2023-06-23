@@ -1,17 +1,19 @@
 // Tạo scene, camera và renderer
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
 );
-var renderer = new THREE.WebGLRenderer();
-var gui = new dat.GUI();
+const renderer = new THREE.WebGLRenderer();
+const gui = new dat.GUI();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-var blockMap = {
+const loader = new THREE.TextureLoader();
+
+const blockMap = {
   box: {
     geometry: (params) =>
       new THREE.BoxGeometry(params.width, params.height, params.depth),
@@ -55,12 +57,12 @@ var blockMap = {
   },
   buffer: {
     geometry: () => {
-      var vertices = [];
+      const vertices = [];
 
       for (let i = 0; i < 10000; i++) {
-        var x = THREE.MathUtils.randFloatSpread(2000);
-        var y = THREE.MathUtils.randFloatSpread(2000);
-        var z = THREE.MathUtils.randFloatSpread(2000);
+        const x = THREE.MathUtils.randFloatSpread(2000);
+        const y = THREE.MathUtils.randFloatSpread(2000);
+        const z = THREE.MathUtils.randFloatSpread(2000);
         vertices.push(x, y, z);
       }
       return new THREE.BufferGeometry().setAttribute(
@@ -71,32 +73,33 @@ var blockMap = {
   },
 };
 
-var materialMap = {
-  basic: (color) => new THREE.MeshBasicMaterial({ color: color }),
-  line: (color) => new THREE.LineBasicMaterial({ color: color }),
-  points: (color) => new THREE.PointsMaterial({ color: color }),
+const materialMap = {
+  basic: (color, texture) => {
+    if (color) {
+      return new THREE.MeshBasicMaterial({ color: color });
+    } else {
+      return new THREE.MeshBasicMaterial({ map: loader.load(texture) });
+    }
+  },
+  line: (color, texture) =>
+    new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
+  points: (color, texture) => new THREE.PointsMaterial({ color: color }),
+  standard: (color, texture) =>
+    new THREE.MeshStandardMaterial({ color: color }),
 };
 
 function drawBlock(config) {
-  var geometry = blockMap[config.nameBlock].geometry(config.params);
-  var material = materialMap[config.nameMaterial](config.color);
-  var block = new THREE.Mesh(geometry, material);
+  const geometry = blockMap[config.nameBlock].geometry(config.params);
+  const material = materialMap[config.nameMaterial](
+    config.color,
+    config.texture
+  );
+  const block = new THREE.Mesh(geometry, material);
   scene.add(block);
   return { geometry, block };
 }
 
-var boxConfig = {
-  nameBlock: "box",
-  nameMaterial: "basic",
-  params: {
-    width: 1,
-    height: 1,
-    depth: 1,
-  },
-  color: "0xffffff",
-};
-
-var sphereConfig = {
+const sphereConfig = {
   nameBlock: "sphere",
   nameMaterial: "basic",
   params: {
@@ -104,10 +107,22 @@ var sphereConfig = {
     widthSegments: 32,
     heightSegments: 32,
   },
-  color: "0xffffff",
+  // color: 0xffff00,
+  texture: "./assets/images/ball.jpg",
 };
 
-var coneConfig = {
+const boxConfig = {
+  nameBlock: "box",
+  nameMaterial: "basic",
+  params: {
+    width: 2,
+    height: 2,
+    depth: 2,
+  },
+  color: 0x00ff00,
+};
+
+const coneConfig = {
   nameBlock: "cone",
   nameMaterial: "basic",
   params: {
@@ -115,10 +130,10 @@ var coneConfig = {
     height: 2,
     radialSegments: 32,
   },
-  color: "0xffffff",
+  color: 0xffffff,
 };
 
-var cylinderConfig = {
+const cylinderConfig = {
   nameBlock: "cylinder",
   nameMaterial: "basic",
   params: {
@@ -127,10 +142,10 @@ var cylinderConfig = {
     height: 2,
     radialSegments: 32,
   },
-  color: "0xffffff",
+  color: 0xffffff,
 };
 
-var torusConfig = {
+const torusConfig = {
   nameBlock: "torus",
   nameMaterial: "basic",
   params: {
@@ -139,30 +154,45 @@ var torusConfig = {
     radialSegments: 16,
     tubularSegments: 32,
   },
-  color: "0xffffff",
+  color: 0xffffff,
 };
 
-var planeConfig = {
+const planeConfig = {
   nameBlock: "plane",
   nameMaterial: "basic",
   params: {
     width: 20,
     height: 20,
   },
-  color: "0xffffff",
+  color: 0x00ff00 ,
 };
 
-var box = drawBlock(boxConfig);
+// const box = drawBlock(boxConfig);
+// box.block.position.y = 2;
+const sphere = drawBlock(sphereConfig);
+sphere.block.position.y = 2;
+const plane = drawBlock(planeConfig);
+plane.block.rotation.x = -Math.PI / 2;
 
 // Đặt camera
-camera.position.z = 5;
+// const controls = new THREE.OrbitControls(camera, renderer.domElement);
+camera.position.set(2, 5, 6);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
+// controls.update();
 
 // Hàm render
-function render() {
-  requestAnimationFrame(render);
+function render(renderer, scene, camera) {
   renderer.render(scene, camera);
+  requestAnimationFrame(function () {
+    render(renderer, scene, camera);
+  });
 }
 
+window.addEventListener("resize", function () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
 // Gọi hàm render
-render();
+render(renderer, scene, camera);
