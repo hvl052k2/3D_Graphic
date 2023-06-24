@@ -1,4 +1,6 @@
-import Teapot  from './draw/Teapot.js';
+
+import { TeapotGeometry } from "./libs/TeapotGeometry.js";
+
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
@@ -24,7 +26,8 @@ const blockMap = {
         params.height,
         params.depth,
         params.widthSegments,
-        params.heightSegments
+        params.heightSegments,
+        params.depthSegments
       ),
   },
   sphere: {
@@ -40,7 +43,8 @@ const blockMap = {
       new THREE.ConeGeometry(
         params.radius,
         params.height,
-        params.radialSegments
+        params.radialSegments,
+        params.heightSegments
       ),
   },
   cylinder: {
@@ -49,7 +53,9 @@ const blockMap = {
         params.radiusTop,
         params.radiusBottom,
         params.height,
-        params.radialSegments
+        params.radialSegments,
+        params.heightSegments,
+        params.openEnded
       ),
   },
   torus: {
@@ -70,19 +76,31 @@ const blockMap = {
         params.heightSegments
       ),
   },
-  capsule:{
-    geometry: (params)=>new THREE.CapsuleGeometry(
-      params.radius,
-      params.length,
-      params.capSubdivisions,
-      params.radialSegments
-    )
+  capsule: {
+    geometry: (params) =>
+      new THREE.CapsuleGeometry(
+        params.radius,
+        params.length,
+        params.capSubdivisions,
+        params.radialSegments
+      ),
   },
-
+  teapot: {
+    geometry: (params) =>
+      new TeapotGeometry(
+        params.teapotSize,
+        params.tess,
+        params.bBottom,
+        params.bLid,
+        params.bBody,
+        params.bFitLid,
+        params.bNonBlinn
+      ),
+  },
 };
 
 const loader = new THREE.TextureLoader();
-
+const sprite = new THREE.TextureLoader().load('./assets/images/disc.png');
 
 const materialMap = {
   basic: (color, texture) => {
@@ -93,7 +111,7 @@ const materialMap = {
     }
   },
   line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
-  points: (color) => new THREE.PointsMaterial({color: color}),
+  points: (color) => new THREE.PointsMaterial({ color: color,size: 0.1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true }),
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -117,24 +135,51 @@ function drawBlock(config) {
     block.material.depthTest = false;
     block.material.opacity = 0.5;
     block.material.transparent = true;
-  } else {
+  } 
+  else if (config.nameMaterial === "points")  {
+    const sizes = [];
+    const positionAttribute = geometry.getAttribute('position')
+    // console.log(positionAttribute)
+    // let newPos = [];
+    // if (config.nameBlock === 'cylinder')
+    // {
+    //   for (let j = -Math.PI; j < Math.PI;j = j+0.1)
+    //   {
+    //     var x = Math.cos(j) * config.params.radiusTop;
+    //     var y = Math.sin(j) * config.params.radiusTop;
+    //   }
+
+      
+    // }
+
+
+
+    for ( let i = 0, l = positionAttribute.count; i < l; i ++ ) {
+      sizes[ i ] = 0.1;
+    }
+    geometry.setAttribute( 'position', positionAttribute );
+    geometry.setAttribute( 'customColor', new THREE.Float32BufferAttribute( config.color , 3 ) );
+    geometry.setAttribute( 'size', new THREE.Float32BufferAttribute( sizes, 1) );
+    block = new THREE.Points( geometry, material );
+  }
+   else {
     block = new THREE.Mesh(geometry, material);
   }
-
+  block.castShadow = true;
   scene.add(block);
   return { geometry, material, block };
 }
 
-
 const boxConfig = {
   nameBlock: "box",
-  nameMaterial: "standard",
+  nameMaterial: "points",
   params: {
     width: 4,
     height: 4,
     depth: 4,
     widthSegments: 15,
     heightSegments: 15,
+    depthSegments: 15,
   },
   color: 0xffffff,
 };
@@ -142,7 +187,9 @@ const boxConfig = {
 // Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
-  nameMaterial: "standard",
+
+  nameMaterial: "points",
+
   params: {
     radius: 2,
     widthSegments: 32,
@@ -155,11 +202,12 @@ const sphereConfig = {
 // Vẽ hình nón
 const coneConfig = {
   nameBlock: "cone",
-  nameMaterial: "line",
+  nameMaterial: "points",
   params: {
     radius: 2,
     height: 4,
     radialSegments: 32,
+    heightSegments: 32,
   },
   color: 0xffffff,
 };
@@ -167,12 +215,14 @@ const coneConfig = {
 // Vẽ hình trụ
 const cylinderConfig = {
   nameBlock: "cylinder",
-  nameMaterial: "line",
+  nameMaterial: "points",
   params: {
     radiusTop: 2,
     radiusBottom: 2,
     height: 4,
     radialSegments: 64,
+    heightSegments: 64,
+    openEnded: false
   },
   color: 0xffffff,
 };
@@ -180,7 +230,7 @@ const cylinderConfig = {
 // Vẽ hình bánh xe
 const torusConfig = {
   nameBlock: "torus",
-  nameMaterial: "line",
+  nameMaterial: "points",
   params: {
     radius: 3,
     tube: 2,
@@ -193,7 +243,7 @@ const torusConfig = {
 // Vẽ mặt phẳng
 const planeConfig = {
   nameBlock: "plane",
-  nameMaterial: "standard",
+  nameMaterial: "points",
   params: {
     width: 20,
     height: 20,
@@ -202,10 +252,22 @@ const planeConfig = {
   },
   color: 0xffffff,
 };
-// -------------teapot-------------
 
-const teapot = Teapot(sphereConfig, materialMap)
-scene.add(teapot)
+const teapotConfig = {
+  nameBlock: "teapot",
+  nameMaterial: "points",
+  params: {
+    teapotSize: 2,
+    tess: 25,
+    bBottom: true,
+    bLid: true,
+    bBody: true,
+    bFitLid: true,
+    bNonBlinn: true,
+  },
+  color: 0xffffff,
+};
+
 
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
@@ -231,14 +293,20 @@ var reflectionCube = new THREE.CubeTextureLoader().load(urls);
 reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
-
 // Tạo các hình
+
+// const teapot = drawBlock(teapotConfig);
+
+
+
+
+
+
 
 // const box = drawBlock(boxConfig);
 // box.block.position.y = 1;
 
 const sphere = drawBlock(sphereConfig);
-sphere.block.castShadow = true;
 sphere.block.position.y = 1;
 
 // const torus = drawBlock(torusConfig);
@@ -246,12 +314,13 @@ sphere.block.position.y = 1;
 
 // const cylinder = drawBlock(cylinderConfig);
 
+
 // const cone = drawBlock(coneConfig);
 
-const plane = drawBlock(planeConfig);
-plane.block.position.y = -2;
-plane.block.rotation.x = -Math.PI / 2;
-plane.block.receiveShadow = true;
+// const plane = drawBlock(planeConfig);
+// plane.block.position.y = -2;
+// plane.block.rotation.x = -Math.PI / 2;
+// plane.block.receiveShadow = true;
 
 // OrbitControls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
