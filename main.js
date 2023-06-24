@@ -94,6 +94,7 @@ const blockMap = {
 };
 
 const loader = new THREE.TextureLoader();
+const sprite = new THREE.TextureLoader().load('./assets/images/disc.png');
 
 const materialMap = {
   basic: (color, texture) => {
@@ -104,7 +105,7 @@ const materialMap = {
     }
   },
   line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
-  points: (color) => new THREE.PointsMaterial({ color: color }),
+  points: (color) => new THREE.PointsMaterial({ color: color,size: 0.05, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true }),
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -128,7 +129,20 @@ function drawBlock(config) {
     block.material.depthTest = false;
     block.material.opacity = 0.5;
     block.material.transparent = true;
-  } else {
+  } 
+  else if (config.nameMaterial === "points")  {
+    const sizes = [];
+    const positionAttribute = geometry.getAttribute('position')
+
+    for ( let i = 0, l = positionAttribute.count; i < l; i ++ ) {
+      sizes[ i ] = 0.1;
+    }
+    geometry.setAttribute( 'position', positionAttribute );
+    geometry.setAttribute( 'customColor', new THREE.Float32BufferAttribute( config.color , 3 ) );
+    geometry.setAttribute( 'size', new THREE.Float32BufferAttribute( sizes, 1) );
+    block = new THREE.Points( geometry, material );
+  }
+   else {
     block = new THREE.Mesh(geometry, material);
   }
   block.castShadow = true;
@@ -215,10 +229,10 @@ const planeConfig = {
 
 const teapotConfig = {
   nameBlock: "teapot",
-  nameMaterial: "line",
+  nameMaterial: "points",
   params: {
     teapotSize: 2,
-    tess: 15,
+    tess: 25,
     bBottom: true,
     bLid: true,
     bBody: true,
@@ -255,6 +269,12 @@ scene.background = reflectionCube;
 // Tạo các hình
 
 const teapot = drawBlock(teapotConfig);
+
+
+
+
+
+
 
 // const box = drawBlock(boxConfig);
 // box.block.position.y = 1;
