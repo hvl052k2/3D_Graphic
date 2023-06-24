@@ -1,3 +1,4 @@
+import { TeapotGeometry } from './libs/TeapotGeometry.js';
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
@@ -82,7 +83,7 @@ const blockMap = {
 
 const loader = new THREE.TextureLoader();
 
-// Material của các hình
+
 const materialMap = {
   basic: (color, texture) => {
     if (color) {
@@ -92,7 +93,7 @@ const materialMap = {
     }
   },
   line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
-  points: (color) => new THREE.PointsMaterial({ color: color }),
+  points: (color) => new THREE.PointsMaterial({color: color}),
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -124,7 +125,7 @@ function drawBlock(config) {
   return { geometry, material, block };
 }
 
-// Vẽ hình hộp
+
 const boxConfig = {
   nameBlock: "box",
   nameMaterial: "standard",
@@ -141,7 +142,7 @@ const boxConfig = {
 // Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
-  nameMaterial: "standard",
+  nameMaterial: "line",
   params: {
     radius: 2,
     widthSegments: 32,
@@ -201,6 +202,41 @@ const planeConfig = {
   },
   color: 0xffffff,
 };
+// -------------teapot-------------
+let tess = 15;	// force initialization
+let bBottom = true;
+let bLid = true;
+let bBody= true;
+let bFitLid= true;
+let bNonBlinn= true;
+let shading= true;
+const teapotSize = 2;
+let teapot, textureCube;
+
+function createNewTeapot(config) {
+  const material = materialMap[config.nameMaterial](
+    config.color,
+    config.texture
+  );
+  if ( teapot !== undefined ) {
+
+    teapot.geometry.dispose();
+    scene.remove( teapot );
+
+  }
+
+  const geometry = new TeapotGeometry( teapotSize,
+    tess,
+    bBottom,
+    bLid,
+    bBody,
+    bFitLid,
+    bNonBlinn);
+  teapot = new THREE.Mesh( geometry, material);
+  scene.add( teapot );
+}
+createNewTeapot(sphereConfig)
+
 
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
