@@ -15,7 +15,13 @@ document.body.appendChild(renderer.domElement);
 const blockMap = {
   box: {
     geometry: (params) =>
-      new THREE.BoxGeometry(params.width, params.height, params.depth, params.widthSegments, params.heightSegments),
+      new THREE.BoxGeometry(
+        params.width,
+        params.height,
+        params.depth,
+        params.widthSegments,
+        params.heightSegments
+      ),
   },
   sphere: {
     geometry: (params) =>
@@ -52,7 +58,13 @@ const blockMap = {
       ),
   },
   plane: {
-    geometry: (params) => new THREE.PlaneGeometry(params.width, params.height, params.widthSegments, params.heightSegments),
+    geometry: (params) =>
+      new THREE.PlaneGeometry(
+        params.width,
+        params.height,
+        params.widthSegments,
+        params.heightSegments
+      ),
   },
 };
 
@@ -66,9 +78,8 @@ const materialMap = {
       return new THREE.MeshBasicMaterial({ map: loader.load(texture) });
     }
   },
-  line: (color, texture) =>
-    new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
-  points: (color, texture) => new THREE.PointsMaterial({ color: color }),
+  line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
+  points: (color) => new THREE.PointsMaterial({ color: color }),
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -80,19 +91,18 @@ const materialMap = {
 
 function drawBlock(config) {
   const geometry = blockMap[config.nameBlock].geometry(config.params);
-  let block, material;
+  const material = materialMap[config.nameMaterial](
+    config.color,
+    config.texture
+  );
+  let block;
   if (config.nameMaterial === "line") {
-    material = new THREE.LineBasicMaterial({ color: config.color });
     const wireframe = new THREE.WireframeGeometry(geometry);
     block = new THREE.LineSegments(wireframe, material);
     block.material.depthTest = false;
     block.material.opacity = 0.5;
     block.material.transparent = true;
   } else {
-    material = materialMap[config.nameMaterial](
-      config.color,
-      config.texture
-    );
     block = new THREE.Mesh(geometry, material);
   }
 
@@ -107,8 +117,8 @@ const boxConfig = {
     width: 4,
     height: 4,
     depth: 4,
-    widthSegments:15,
-    heightSegments:15,
+    widthSegments: 15,
+    heightSegments: 15,
   },
   color: 0xffffff,
 };
@@ -175,7 +185,7 @@ const planeConfig = {
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
 const pointLight = new THREE.PointLight(0xffffff, 1.5);
-pointLight.position.set(3,7,1);
+pointLight.position.set(3, 7, 1);
 scene.add(pointLight);
 scene.add(ambientLight);
 
@@ -195,11 +205,11 @@ var reflectionCube = new THREE.CubeTextureLoader().load(urls);
 reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
-const box = drawBlock(boxConfig);
-box.block.position.y = 1;
+// const box = drawBlock(boxConfig);
+// box.block.position.y = 1;
 
-// const sphere = drawBlock(sphereConfig);
-// sphere.block.position.y = 1;
+const sphere = drawBlock(sphereConfig);
+sphere.block.position.y = 1;
 
 // const torus = drawBlock(torusConfig);
 // torus.block.position.y = 1;
@@ -211,19 +221,6 @@ box.block.position.y = 1;
 const plane = drawBlock(planeConfig);
 plane.block.position.y = -2;
 plane.block.rotation.x = -Math.PI / 2;
-
-// Hàm đổi màu chất liệu
-// const data = {
-//   color: sphere.material.color.getHex(),
-//   mapsEnabled: true
-// }
-// const colorFolder = gui.addFolder("Color");
-// colorFolder.addColor(data, "color").onChange(() => {
-//   sphere.material.color.setHex(
-//     Number(data.color.toString().replace("#", "0x"))
-//   );
-// });
-
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.update();
@@ -237,16 +234,30 @@ cameraFolder.add(camera.position, "x", -5, 10);
 cameraFolder.add(camera.position, "y", -5, 20);
 cameraFolder.add(camera.position, "z", -5, 20);
 
-const lightdata = {
-  color: pointLight.color.getHex(),
+// Hàm đổi màu chất liệu
+const data = {
+  color: sphere.material.color.getHex(),
   mapsEnabled: true
 }
+const colorFolder = gui.addFolder("Color");
+colorFolder.addColor(data, "color").onChange(() => {
+  sphere.material.color.setHex(
+    Number(data.color.toString().replace("#", "0x"))
+  );
+});
+
+const lightdata = {
+  color: pointLight.color.getHex(),
+  mapsEnabled: true,
+};
 
 const lightFolder = gui.addFolder("Light");
-lightFolder.addColor(lightdata, 'color').onChange(() => {
-  pointLight.color.setHex(Number(lightdata.color.toString().replace("#", "0x")));
-})
-lightFolder.add(pointLight,"intensity",0,4);
+lightFolder.add(pointLight, "intensity", 0, 5);
+lightFolder.addColor(lightdata, "color").onChange(() => {
+  pointLight.color.setHex(
+    Number(lightdata.color.toString().replace("#", "0x"))
+  );
+});
 
 // Hàm render
 function render(renderer, scene, camera) {
