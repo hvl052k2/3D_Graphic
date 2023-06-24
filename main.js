@@ -11,8 +11,11 @@ const camera = new THREE.PerspectiveCamera(
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
+// Geometry của các hình
 const blockMap = {
   box: {
     geometry: (params) =>
@@ -67,10 +70,18 @@ const blockMap = {
         params.heightSegments
       ),
   },
+  capsule:{
+    geometry: (params)=>new THREE.CapsuleGeometry(
+      params.radius,
+      params.length,
+      params.capSubdivisions,
+      params.radialSegments
+    )
+  },
+
 };
 
 const loader = new THREE.TextureLoader();
-
 
 
 const materialMap = {
@@ -92,6 +103,7 @@ const materialMap = {
   },
 };
 
+// Hàm vẽ hình
 function drawBlock(config) {
   const geometry = blockMap[config.nameBlock].geometry(config.params);
   const material = materialMap[config.nameMaterial](
@@ -114,7 +126,6 @@ function drawBlock(config) {
 }
 
 
-
 const boxConfig = {
   nameBlock: "box",
   nameMaterial: "standard",
@@ -128,6 +139,7 @@ const boxConfig = {
   color: 0xffffff,
 };
 
+// Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
   nameMaterial: "line",
@@ -140,6 +152,7 @@ const sphereConfig = {
   // texture: "./assets/images/ball.jpg",
 };
 
+// Vẽ hình nón
 const coneConfig = {
   nameBlock: "cone",
   nameMaterial: "line",
@@ -151,6 +164,7 @@ const coneConfig = {
   color: 0xffffff,
 };
 
+// Vẽ hình trụ
 const cylinderConfig = {
   nameBlock: "cylinder",
   nameMaterial: "line",
@@ -163,6 +177,7 @@ const cylinderConfig = {
   color: 0xffffff,
 };
 
+// Vẽ hình bánh xe
 const torusConfig = {
   nameBlock: "torus",
   nameMaterial: "line",
@@ -175,9 +190,10 @@ const torusConfig = {
   color: 0xffffff,
 };
 
+// Vẽ mặt phẳng
 const planeConfig = {
   nameBlock: "plane",
-  nameMaterial: "line",
+  nameMaterial: "standard",
   params: {
     width: 20,
     height: 20,
@@ -225,6 +241,7 @@ createNewTeapot(sphereConfig)
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
 const pointLight = new THREE.PointLight(0xffffff, 1.5);
+pointLight.castShadow = true;
 pointLight.position.set(3, 7, 1);
 scene.add(pointLight);
 scene.add(ambientLight);
@@ -245,10 +262,14 @@ var reflectionCube = new THREE.CubeTextureLoader().load(urls);
 reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
+
+// Tạo các hình
+
 // const box = drawBlock(boxConfig);
 // box.block.position.y = 1;
 
 const sphere = drawBlock(sphereConfig);
+sphere.block.castShadow = true;
 sphere.block.position.y = 1;
 
 // const torus = drawBlock(torusConfig);
@@ -261,7 +282,9 @@ sphere.block.position.y = 1;
 const plane = drawBlock(planeConfig);
 plane.block.position.y = -2;
 plane.block.rotation.x = -Math.PI / 2;
+plane.block.receiveShadow = true;
 
+// OrbitControls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.update();
 
@@ -274,25 +297,29 @@ cameraFolder.add(camera.position, "x", -5, 10);
 cameraFolder.add(camera.position, "y", -5, 20);
 cameraFolder.add(camera.position, "z", -5, 20);
 
-// Hàm đổi màu chất liệu
-const data = {
-  color: sphere.material.color.getHex(),
-  mapsEnabled: true
-}
-const colorFolder = gui.addFolder("Color");
-colorFolder.addColor(data, "color").onChange(() => {
-  sphere.material.color.setHex(
-    Number(data.color.toString().replace("#", "0x"))
-  );
-});
+// GUI đổi màu chất liệu
+// const materialData = {
+//   color: sphere.material.color.getHex(),
+//   mapsEnabled: true
+// }
 
+// const colorFolder = gui.addFolder("Color");
+// colorFolder.addColor(materialData, "color").onChange(() => {
+//   sphere.material.color.setHex(
+//     Number(materialData.color.toString().replace("#", "0x"))
+//   );
+// });
+
+// GUI đổi màu ánh sáng
 const lightdata = {
   color: pointLight.color.getHex(),
   mapsEnabled: true,
 };
 
 const lightFolder = gui.addFolder("Light");
-lightFolder.add(pointLight, "intensity", 0, 5);
+lightFolder.add(pointLight, "intensity", 0, 10);
+lightFolder.add(pointLight, "distance", 0, 1000);
+lightFolder.add(pointLight, "decay", 0, 100);
 lightFolder.addColor(lightdata, "color").onChange(() => {
   pointLight.color.setHex(
     Number(lightdata.color.toString().replace("#", "0x"))
@@ -313,5 +340,4 @@ window.addEventListener("resize", function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Gọi hàm render
 render(renderer, scene, camera);
