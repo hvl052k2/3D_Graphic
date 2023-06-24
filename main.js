@@ -1,4 +1,6 @@
+
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
+
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
@@ -185,7 +187,9 @@ const boxConfig = {
 // Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
+
   nameMaterial: "points",
+
   params: {
     radius: 2,
     widthSegments: 32,
@@ -263,6 +267,7 @@ const teapotConfig = {
   },
   color: 0xffffff,
 };
+
 
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
