@@ -12,6 +12,7 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Geometry của các hình
 const blockMap = {
   box: {
     geometry: (params) =>
@@ -70,6 +71,7 @@ const blockMap = {
 
 const loader = new THREE.TextureLoader();
 
+// Material của các hình
 const materialMap = {
   basic: (color, texture) => {
     if (color) {
@@ -89,6 +91,7 @@ const materialMap = {
   },
 };
 
+// Hàm vẽ hình
 function drawBlock(config) {
   const geometry = blockMap[config.nameBlock].geometry(config.params);
   const material = materialMap[config.nameMaterial](
@@ -110,6 +113,7 @@ function drawBlock(config) {
   return { geometry, material, block };
 }
 
+// Vẽ hình hộp
 const boxConfig = {
   nameBlock: "box",
   nameMaterial: "standard",
@@ -123,9 +127,10 @@ const boxConfig = {
   color: 0xffffff,
 };
 
+// Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
-  nameMaterial: "standard",
+  nameMaterial: "line",
   params: {
     radius: 2,
     widthSegments: 32,
@@ -135,6 +140,7 @@ const sphereConfig = {
   // texture: "./assets/images/ball.jpg",
 };
 
+// Vẽ hình nón
 const coneConfig = {
   nameBlock: "cone",
   nameMaterial: "line",
@@ -146,6 +152,7 @@ const coneConfig = {
   color: 0xffffff,
 };
 
+// Vẽ hình trụ
 const cylinderConfig = {
   nameBlock: "cylinder",
   nameMaterial: "line",
@@ -158,6 +165,7 @@ const cylinderConfig = {
   color: 0xffffff,
 };
 
+// Vẽ hình bánh xe
 const torusConfig = {
   nameBlock: "torus",
   nameMaterial: "line",
@@ -170,6 +178,7 @@ const torusConfig = {
   color: 0xffffff,
 };
 
+// Vẽ mặt phẳng
 const planeConfig = {
   nameBlock: "plane",
   nameMaterial: "line",
@@ -205,6 +214,8 @@ var reflectionCube = new THREE.CubeTextureLoader().load(urls);
 reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
+
+// Tạo các hình
 // const box = drawBlock(boxConfig);
 // box.block.position.y = 1;
 
@@ -222,6 +233,7 @@ const plane = drawBlock(planeConfig);
 plane.block.position.y = -2;
 plane.block.rotation.x = -Math.PI / 2;
 
+// OrbitControls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.update();
 
@@ -234,18 +246,20 @@ cameraFolder.add(camera.position, "x", -5, 10);
 cameraFolder.add(camera.position, "y", -5, 20);
 cameraFolder.add(camera.position, "z", -5, 20);
 
-// Hàm đổi màu chất liệu
-const data = {
+// GUI đổi màu chất liệu
+const materialData = {
   color: sphere.material.color.getHex(),
   mapsEnabled: true
 }
+
 const colorFolder = gui.addFolder("Color");
-colorFolder.addColor(data, "color").onChange(() => {
+colorFolder.addColor(materialData, "color").onChange(() => {
   sphere.material.color.setHex(
-    Number(data.color.toString().replace("#", "0x"))
+    Number(materialData.color.toString().replace("#", "0x"))
   );
 });
 
+// GUI đổi màu ánh sáng
 const lightdata = {
   color: pointLight.color.getHex(),
   mapsEnabled: true,
@@ -273,5 +287,4 @@ window.addEventListener("resize", function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Gọi hàm render
 render(renderer, scene, camera);
