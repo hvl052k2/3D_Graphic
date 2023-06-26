@@ -127,7 +127,7 @@ const materialMap = {
   points: (color) =>
     new THREE.PointsMaterial({
       color: color,
-      size: 0.1,
+      size: 0.15,
       sizeAttenuation: true,
       map: sprite,
       alphaTest: 0.5,
@@ -314,12 +314,11 @@ scene.background = reflectionCube;
 
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
-
+var currentBlock = drawBlock(boxConfig);
 const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
   itemSecond.addEventListener('click', () => {
     const text = itemSecond.innerText;
-    let box, sphere,cone,cylinder,torus,teapot ;
     if(text == "Box"){
       scene.children.forEach(child => {
         if(nameObjects.includes(child.name)){
@@ -328,10 +327,7 @@ itemSeconds.forEach(itemSecond => {
           scene.remove(obj)
         }
       });
-      
-      box = drawBlock(boxConfig);
-      box.block.position.y = 1;
-      transformControl.attach(box.block);
+      currentBlock = drawBlock(boxConfig);
     }
 
     else if(text == "Sphere"){
@@ -342,9 +338,7 @@ itemSeconds.forEach(itemSecond => {
           scene.remove(obj)
         }
       });
-      sphere = drawBlock(sphereConfig);
-      sphere.block.position.y = 1;
-      transformControl.attach(sphere.block);
+      currentBlock = drawBlock(sphereConfig);
     }
 
     else if(text == "Cone"){
@@ -355,8 +349,7 @@ itemSeconds.forEach(itemSecond => {
           scene.remove(obj)
         }
       });
-      cone = drawBlock(coneConfig);
-      transformControl.attach(cone.block);
+      currentBlock = drawBlock(coneConfig);
     }
 
     else if(text == "Cylinder"){
@@ -367,8 +360,7 @@ itemSeconds.forEach(itemSecond => {
           scene.remove(obj)
         }
       });
-      cylinder = drawBlock(cylinderConfig);
-      transformControl.attach(cylinder.block);
+      currentBlock = drawBlock(cylinderConfig);
     }
 
     else if(text == "Torus"){
@@ -379,9 +371,7 @@ itemSeconds.forEach(itemSecond => {
           scene.remove(obj)
         }
       });
-      torus = drawBlock(torusConfig);
-      torus.block.position.y = 1;
-      transformControl.attach(torus.block);
+      currentBlock = drawBlock(torusConfig);
     }
 
     else if(text == "Teapot"){
@@ -392,20 +382,16 @@ itemSeconds.forEach(itemSecond => {
           scene.remove(obj)
         }
       });
-      teapot = drawBlock(teapotConfig);
-      transformControl.attach(teapot.block);
+      currentBlock = drawBlock(teapotConfig);
+      
     }
-
-
-
+    transformControl.attach(currentBlock.block);
   })
 })
-
 
 // thanh bar bên trái.
 const element_left = document.querySelectorAll('.item-feature')
 const btnFeatures = document.querySelectorAll(".btn-feature");
-
 
 element_left.forEach((e,i)=>{
   e.onclick=() =>{
@@ -444,29 +430,16 @@ element_left.forEach((e,i)=>{
   }
 })
 
-
-
-
-
-// const teapot = drawBlock(teapotConfig);
-
-// const box = drawBlock(boxConfig);
-// box.block.position.y = 1;
-
-// const sphere = drawBlock(sphereConfig);
-// sphere.block.position.y = 1;
-
-// const torus = drawBlock(torusConfig);
-// torus.block.position.y = 1;
-
-// const cylinder = drawBlock(cylinderConfig);
-
-// const cone = drawBlock(coneConfig);
-
 // const plane = drawBlock(planeConfig);
 // plane.block.position.y = -2;
 // plane.block.rotation.x = -Math.PI / 2;
 // plane.block.receiveShadow = true;
+
+const size = 100;
+const divisions = 100;
+
+const gridHelper = new THREE.GridHelper( size, divisions );
+scene.add( gridHelper );
 
 function onWindowResize() {
 
@@ -603,17 +576,17 @@ cameraFolder.add(camera.position, "y", -5, 20);
 cameraFolder.add(camera.position, "z", -5, 20);
 
 // GUI đổi màu chất liệu
-// const materialData = {
-//   color: sphere.material.color.getHex(),
-//   mapsEnabled: true
-// }
+const materialData = {
+  color: currentBlock.material.color.getHex(),
+  mapsEnabled: true
+}
 
-// const colorFolder = gui.addFolder("Color");
-// colorFolder.addColor(materialData, "color").onChange(() => {
-//   sphere.material.color.setHex(
-//     Number(materialData.color.toString().replace("#", "0x"))
-//   );
-// });
+const colorFolder = gui.addFolder("Color");
+colorFolder.addColor(materialData, "color").onChange(() => {
+  currentBlock.material.color.setHex(
+    Number(materialData.color.toString().replace("#", "0x"))
+  );
+});
 
 // GUI đổi màu ánh sáng
 const lightdata = {
