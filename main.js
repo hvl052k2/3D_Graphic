@@ -319,8 +319,7 @@ const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
   itemSecond.addEventListener('click', () => {
     const text = itemSecond.innerText;
-    let box, sphere,cone,cylinder,torus,teapot;
-
+    let box, sphere,cone,cylinder,torus,teapot ;
     if(text == "Box"){
       scene.children.forEach(child => {
         if(nameObjects.includes(child.name)){
@@ -331,6 +330,7 @@ itemSeconds.forEach(itemSecond => {
       });
       
       box = drawBlock(boxConfig);
+      box.block.position.y = 1;
       transformControl.attach(box.block);
     }
 
@@ -343,6 +343,7 @@ itemSeconds.forEach(itemSecond => {
         }
       });
       sphere = drawBlock(sphereConfig);
+      sphere.block.position.y = 1;
       transformControl.attach(sphere.block);
     }
 
@@ -379,6 +380,7 @@ itemSeconds.forEach(itemSecond => {
         }
       });
       torus = drawBlock(torusConfig);
+      torus.block.position.y = 1;
       transformControl.attach(torus.block);
     }
 
@@ -402,27 +404,46 @@ itemSeconds.forEach(itemSecond => {
 
 // thanh bar bên trái.
 const element_left = document.querySelectorAll('.item-feature')
+const btnFeatures = document.querySelectorAll(".btn-feature");
 
-element_left[0].onclick = () =>{
-  transformControl.setMode("translate");
-  transformControl.showX = !transformControl.showX
-  transformControl.showY = !transformControl.showY
-  transformControl.showZ = !transformControl.showZ
-}
 
-element_left[1].onclick = () =>{
-  transformControl.setMode("rotate");
-  transformControl.showX = !transformControl.showX
-  transformControl.showY = !transformControl.showY
-  transformControl.showZ = !transformControl.showZ
-}
+element_left.forEach((e,i)=>{
+  e.onclick=() =>{
+      switch(i){
+        case 0:
+          transformControl.setMode("translate");
+          break;
+        case 1:
+          transformControl.setMode("rotate");
+          break
+        case 2:
+          transformControl.setMode("scale");
+          break
+        case 3:
+          transformControl.setMode("scale");
+          break
+        case 4:
+          transformControl.setMode("scale");
+          break
+      }
+    btnFeatures[i].classList.toggle('active')
+    for(let j = 0; j<5;j++){
+      if (j!=i)
+        btnFeatures[j].classList.remove('active')
+    }
+    if (transformControl.showX == false){
+      transformControl.showX = true
+      transformControl.showY = true
+      transformControl.showZ = true
+    }
+    if (!btnFeatures[i].classList.contains('active')){
+      transformControl.showX = false
+      transformControl.showY = false
+      transformControl.showZ = false
+    }
+  }
+})
 
-element_left[2].onclick = () =>{
-  transformControl.setMode("scale");
-  transformControl.showX = !transformControl.showX
-  transformControl.showY = !transformControl.showY
-  transformControl.showZ = !transformControl.showZ
-}
 
 
 
@@ -616,12 +637,6 @@ window.addEventListener("resize", function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-const btnFeatures = document.querySelectorAll(".btn-feature");
-btnFeatures.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    btn.classList.toggle("active");
-  });
-});
 
 function render() {
   renderer.render( scene, camera );
