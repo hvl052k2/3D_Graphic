@@ -311,7 +311,7 @@ reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
 // Tạo các hình
-var nameObjects = ["box", "sphere", "cone","cylinder", "torus", "teapot"];
+var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
 
 const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
@@ -326,6 +326,7 @@ itemSeconds.forEach(itemSecond => {
       });
       const box = drawBlock(boxConfig);
       box.block.position.y = 1;
+      transformControl.attach(box.block);
     }
 
     else if(text == "Sphere"){
@@ -337,6 +338,7 @@ itemSeconds.forEach(itemSecond => {
       });
       const sphere = drawBlock(sphereConfig);
       sphere.block.position.y = 1;
+      transformControl.attach(sphere.block);
     }
 
     else if(text == "Cone"){
@@ -347,6 +349,7 @@ itemSeconds.forEach(itemSecond => {
         }
       });
       const cone = drawBlock(coneConfig);
+      transformControl.attach(cone.block);
     }
 
     else if(text == "Cylinder"){
@@ -357,6 +360,7 @@ itemSeconds.forEach(itemSecond => {
         }
       });
       const cylinder = drawBlock(cylinderConfig);
+      transformControl.attach(cylinder.block);
     }
 
     else if(text == "Torus"){
@@ -368,6 +372,7 @@ itemSeconds.forEach(itemSecond => {
       });
       const torus = drawBlock(torusConfig);
       torus.block.position.y = 1;
+      transformControl.attach(torus.block);
     }
 
     else if(text == "Teapot"){
@@ -378,6 +383,7 @@ itemSeconds.forEach(itemSecond => {
         }
       });
       const teapot = drawBlock(teapotConfig);
+      transformControl.attach(teapot.block);
     }
 
 
@@ -432,7 +438,13 @@ transformControl.addEventListener("dragging-changed", function (event) {
   orbitControl.enabled = !event.value;
 });
 
-transformControl.attach(sphere.block);
+let obj = scene.children.forEach(child => {
+  if(nameObjects.includes(child.name)){
+    return child;
+  }
+})
+
+// transformControl.attach(obj.block);
 scene.add(transformControl);
 
 window.addEventListener("keydown", function (event) {
