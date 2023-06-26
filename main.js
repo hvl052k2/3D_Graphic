@@ -315,6 +315,7 @@ scene.background = reflectionCube;
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
 var currentBlock = drawBlock(boxConfig);
+transformControl.attach(currentBlock.block);
 const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
   itemSecond.addEventListener('click', () => {
