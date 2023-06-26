@@ -582,10 +582,6 @@ lightFolder.addColor(lightdata, "color").onChange(() => {
   );
 });
 
-function render() {
-  renderer.render( scene, camera );
-}
-
 window.addEventListener("resize", function () {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -599,10 +595,12 @@ btnFeatures.forEach((btn) => {
   });
 });
 
-render();
+function render() {
+  renderer.render( scene, camera );
+}
+
 function animate(){
-  requestAnimationFrame(function () {
-    render(renderer, scene, camera);
-  });
+  requestAnimationFrame(animate);
+  render();
 }
 animate()
