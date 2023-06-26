@@ -317,15 +317,17 @@ const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
   itemSecond.addEventListener('click', () => {
     const text = itemSecond.innerText;
-    transformControl.dispose();
+    let box, sphere,cone,cylinder,torus,teapot ;
     if(text == "Box"){
       scene.children.forEach(child => {
         if(child.name != 'box' && nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
-      const box = drawBlock(boxConfig);
+      
+      box = drawBlock(boxConfig);
       box.block.position.y = 1;
       transformControl.attach(box.block);
     }
@@ -334,10 +336,11 @@ itemSeconds.forEach(itemSecond => {
       scene.children.forEach(child => {
         if(child.name != 'sphere' && nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
-      const sphere = drawBlock(sphereConfig);
+      sphere = drawBlock(sphereConfig);
       sphere.block.position.y = 1;
       transformControl.attach(sphere.block);
     }
@@ -346,10 +349,11 @@ itemSeconds.forEach(itemSecond => {
       scene.children.forEach(child => {
         if(child.name != 'cone' && nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
-      const cone = drawBlock(coneConfig);
+      cone = drawBlock(coneConfig);
       transformControl.attach(cone.block);
     }
 
@@ -357,10 +361,11 @@ itemSeconds.forEach(itemSecond => {
       scene.children.forEach(child => {
         if(child.name != 'cylinder' && nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
-      const cylinder = drawBlock(cylinderConfig);
+      cylinder = drawBlock(cylinderConfig);
       transformControl.attach(cylinder.block);
     }
 
@@ -368,10 +373,11 @@ itemSeconds.forEach(itemSecond => {
       scene.children.forEach(child => {
         if(child.name != 'torus' && nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
-      const torus = drawBlock(torusConfig);
+      torus = drawBlock(torusConfig);
       torus.block.position.y = 1;
       transformControl.attach(torus.block);
     }
@@ -380,12 +386,14 @@ itemSeconds.forEach(itemSecond => {
       scene.children.forEach(child => {
         if(child.name != 'teapot' && nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
-      const teapot = drawBlock(teapotConfig);
+      teapot = drawBlock(teapotConfig);
       transformControl.attach(teapot.block);
     }
+
 
 
   })
@@ -576,9 +584,6 @@ lightFolder.addColor(lightdata, "color").onChange(() => {
 
 function render() {
   renderer.render( scene, camera );
-  requestAnimationFrame(function () {
-    render(renderer, scene, camera);
-  });
 }
 
 window.addEventListener("resize", function () {
@@ -595,3 +600,9 @@ btnFeatures.forEach((btn) => {
 });
 
 render();
+function animate(){
+  requestAnimationFrame(function () {
+    render(renderer, scene, camera);
+  });
+}
+animate()
