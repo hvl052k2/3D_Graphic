@@ -183,6 +183,7 @@ function drawBlock(config) {
     block = new THREE.Mesh(geometry, material);
   }
   block.castShadow = true;
+  block.name = config.nameBlock;
   scene.add(block);
   return { geometry, material, block };
 }
@@ -310,14 +311,86 @@ reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
 // Tạo các hình
+var nameObjects = ["box", "sphere", "cone","cylinder", "torus", "teapot"];
+
+const itemSeconds = document.querySelectorAll('.item-second');
+itemSeconds.forEach(itemSecond => {
+  itemSecond.addEventListener('click', () => {
+    const text = itemSecond.innerText;
+    if(text == "Box"){
+      scene.children.forEach(child => {
+        if(child.name != 'box' && nameObjects.includes(child.name)){
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj)
+        }
+      });
+      const box = drawBlock(boxConfig);
+      box.block.position.y = 1;
+    }
+
+    else if(text == "Sphere"){
+      scene.children.forEach(child => {
+        if(child.name != 'sphere' && nameObjects.includes(child.name)){
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj)
+        }
+      });
+      const sphere = drawBlock(sphereConfig);
+      sphere.block.position.y = 1;
+    }
+
+    else if(text == "Cone"){
+      scene.children.forEach(child => {
+        if(child.name != 'cone' && nameObjects.includes(child.name)){
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj)
+        }
+      });
+      const cone = drawBlock(coneConfig);
+    }
+
+    else if(text == "Cylinder"){
+      scene.children.forEach(child => {
+        if(child.name != 'cylinder' && nameObjects.includes(child.name)){
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj)
+        }
+      });
+      const cylinder = drawBlock(cylinderConfig);
+    }
+
+    else if(text == "Torus"){
+      scene.children.forEach(child => {
+        if(child.name != 'torus' && nameObjects.includes(child.name)){
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj)
+        }
+      });
+      const torus = drawBlock(torusConfig);
+      torus.block.position.y = 1;
+    }
+
+    else if(text == "Teapot"){
+      scene.children.forEach(child => {
+        if(child.name != 'teapot' && nameObjects.includes(child.name)){
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj)
+        }
+      });
+      const teapot = drawBlock(teapotConfig);
+    }
+
+
+  })
+})
 
 // const teapot = drawBlock(teapotConfig);
 
 // const box = drawBlock(boxConfig);
 // box.block.position.y = 1;
 
-const sphere = drawBlock(sphereConfig);
-sphere.block.position.y = 1;
+// const sphere = drawBlock(sphereConfig);
+// sphere.block.position.y = 1;
 
 // const torus = drawBlock(torusConfig);
 // torus.block.position.y = 1;
