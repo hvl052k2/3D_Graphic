@@ -21,13 +21,15 @@ const cameraOrtho = new THREE.OrthographicCamera(
   30000
 );
 const camera = cameraPersp;
-
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
-
+const transformControl = new TransformControls(camera, renderer.domElement);
+transformControl.showX = false;
+transformControl.showY = false;
+transformControl.showZ = false;
 // Geometry của các hình
 const blockMap = {
   box: {
@@ -399,6 +401,34 @@ itemSeconds.forEach(itemSecond => {
   })
 })
 
+
+// thanh bar bên trái.
+const element_left = document.querySelectorAll('.item-feature')
+
+element_left[0].onclick = () =>{
+  transformControl.setMode("translate");
+  transformControl.showX = !transformControl.showX
+  transformControl.showY = !transformControl.showY
+  transformControl.showZ = !transformControl.showZ
+}
+
+element_left[1].onclick = () =>{
+  transformControl.setMode("rotate");
+  transformControl.showX = !transformControl.showX
+  transformControl.showY = !transformControl.showY
+  transformControl.showZ = !transformControl.showZ
+}
+
+element_left[2].onclick = () =>{
+  transformControl.setMode("scale");
+  transformControl.showX = !transformControl.showX
+  transformControl.showY = !transformControl.showY
+  transformControl.showZ = !transformControl.showZ
+}
+
+
+
+
 // const teapot = drawBlock(teapotConfig);
 
 // const box = drawBlock(boxConfig);
@@ -441,7 +471,7 @@ function onWindowResize() {
 const orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
 orbitControl.update();
 
-const transformControl = new TransformControls(camera, renderer.domElement);
+
 transformControl.addEventListener("change", render);
 transformControl.addEventListener("dragging-changed", function (event) {
   orbitControl.enabled = !event.value;
