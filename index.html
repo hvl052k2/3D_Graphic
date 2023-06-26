@@ -5,10 +5,80 @@
     <meta charset="UTF-8" />
     <title>ĐỒ ÁN ĐHMT</title>
     <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css">
+    <link rel="stylesheet" href="./assets/fontawesome/css/all.css">
 </head>
 
 <body>
+    <header class="header">
+        <p class="title">ĐỒ ÁN CUỐI KỲ ĐỒ HỌA MÁY TÍNH</p>
+        <ul class="unorderlist">
+            <li class="item">
+                <p>Geometry <i class="fa-solid fa-sort-down"></i></p class="feature">
+                <ul class="item-list">
+                    <li class="item-second">Box</li>
+                    <li class="item-second">Sphere</li>
+                    <li class="item-second">Cone</li>
+                    <li class="item-second">Cylinder</li>
+                    <li class="item-second">Torus</li>
+                    <li class="item-second">Teapot</li>
+                </ul>
+            </li>
+
+            <li class="item">
+                <p>Surface <i class="fa-solid fa-sort-down"></i></p>
+
+                <ul class="item-list">
+                    <li class="item-second">Solid</li>
+                    <li class="item-second">Point</li>
+                    <li class="item-second">Line</li>
+                    <li class="item-second">Texture</li>
+                </ul>
+            </li>
+            <li class="item">
+                <p>Light <i class="fa-solid fa-sort-down"></i></p>
+
+                <ul class="item-list">
+                    <li class="item-second">Point Light</li>
+                    <li class="item-second">Remove Light</li>
+                </ul>
+            </li>
+            <li class="item">
+                <p>Animation <i class="fa-solid fa-sort-down"></i></p>
+                <ul class="item-list">
+                    <li class="item-second">Animation 1</li>
+                    <li class="item-second">Animation 2</li>
+                    <li class="item-second">Animation 3</li>
+                    <li class="item-second">Remove Animation</li>
+                </ul>
+            </li>
+        </ul>
+    </header>
+
+    <ul class="feature">
+        <li class="item-feature">
+            <div class="btn-feature"><i class="fa-solid fa-up-down-left-right"></i></div>
+            Translat Geometry
+        </li>
+        <li class="item-feature">
+            <div class="btn-feature"><i class="fa-solid fa-rotate"></i></div>
+            Rotate Geometry
+        </li>
+        <li class="item-feature">
+            <div class="btn-feature"><i class="fa-solid fa-maximize"></i></div>
+            Scale Geometry
+        </li>
+        <li class="item-feature">
+            <div class="btn-feature"><i class="fa-solid fa-lightbulb"></i></i></div>
+            Translate Light
+        </li>
+        <li class="item-feature">
+            <div class="btn-feature"><i class="fa-solid fa-music"></i></i></div>
+            Play Music
+        </li>
+    </ul>
+
+
+
     <script src="./libs/three.js"></script>
     <script src="./libs/dat.gui.min.js"></script>
     <script src="./libs/OrbitControls.js"></script>

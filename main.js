@@ -297,12 +297,6 @@ scene.background = reflectionCube;
 
 // const teapot = drawBlock(teapotConfig);
 
-
-
-
-
-
-
 // const box = drawBlock(boxConfig);
 // box.block.position.y = 1;
 
@@ -313,7 +307,6 @@ sphere.block.position.y = 1;
 // torus.block.position.y = 1;
 
 // const cylinder = drawBlock(cylinderConfig);
-
 
 // const cone = drawBlock(coneConfig);
 
@@ -376,6 +369,13 @@ window.addEventListener("resize", function () {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const btnFeatures = document.querySelectorAll('.btn-feature');
+btnFeatures.forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('active');
+  });
 });
 
 render(renderer, scene, camera);
