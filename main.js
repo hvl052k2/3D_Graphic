@@ -319,10 +319,11 @@ const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
   itemSecond.addEventListener('click', () => {
     const text = itemSecond.innerText;
-    let box, sphere,cone,cylinder,torus,teapot ;
+    let box, sphere,cone,cylinder,torus,teapot;
+
     if(text == "Box"){
       scene.children.forEach(child => {
-        if(child.name != 'box' && nameObjects.includes(child.name)){
+        if(nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
           scene.remove(obj)
@@ -330,26 +331,24 @@ itemSeconds.forEach(itemSecond => {
       });
       
       box = drawBlock(boxConfig);
-      box.block.position.y = 1;
       transformControl.attach(box.block);
     }
 
     else if(text == "Sphere"){
       scene.children.forEach(child => {
-        if(child.name != 'sphere' && nameObjects.includes(child.name)){
+        if(nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
       sphere = drawBlock(sphereConfig);
-      sphere.block.position.y = 1;
       transformControl.attach(sphere.block);
     }
 
     else if(text == "Cone"){
       scene.children.forEach(child => {
-        if(child.name != 'cone' && nameObjects.includes(child.name)){
+        if(nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
           scene.remove(obj)
@@ -361,7 +360,7 @@ itemSeconds.forEach(itemSecond => {
 
     else if(text == "Cylinder"){
       scene.children.forEach(child => {
-        if(child.name != 'cylinder' && nameObjects.includes(child.name)){
+        if(nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
           scene.remove(obj)
@@ -373,20 +372,19 @@ itemSeconds.forEach(itemSecond => {
 
     else if(text == "Torus"){
       scene.children.forEach(child => {
-        if(child.name != 'torus' && nameObjects.includes(child.name)){
+        if(nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
           scene.remove(obj)
         }
       });
       torus = drawBlock(torusConfig);
-      torus.block.position.y = 1;
       transformControl.attach(torus.block);
     }
 
     else if(text == "Teapot"){
       scene.children.forEach(child => {
-        if(child.name != 'teapot' && nameObjects.includes(child.name)){
+        if(nameObjects.includes(child.name)){
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
           scene.remove(obj)
