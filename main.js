@@ -317,6 +317,7 @@ const itemSeconds = document.querySelectorAll('.item-second');
 itemSeconds.forEach(itemSecond => {
   itemSecond.addEventListener('click', () => {
     const text = itemSecond.innerText;
+    transformControl.dispose();
     if(text == "Box"){
       scene.children.forEach(child => {
         if(child.name != 'box' && nameObjects.includes(child.name)){
@@ -438,13 +439,7 @@ transformControl.addEventListener("dragging-changed", function (event) {
   orbitControl.enabled = !event.value;
 });
 
-let obj = scene.children.forEach(child => {
-  if(nameObjects.includes(child.name)){
-    return child;
-  }
-})
 
-// transformControl.attach(obj.block);
 scene.add(transformControl);
 
 window.addEventListener("keydown", function (event) {
@@ -581,6 +576,9 @@ lightFolder.addColor(lightdata, "color").onChange(() => {
 
 function render() {
   renderer.render( scene, camera );
+  requestAnimationFrame(function () {
+    render(renderer, scene, camera);
+  });
 }
 
 window.addEventListener("resize", function () {
