@@ -1,16 +1,26 @@
-
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
-import {TransformControls } from "./libs/TransformControls.js"
+import { TransformControls } from "./libs/TransformControls.js";
 
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
-const camera = new THREE.PerspectiveCamera(
+const aspect = window.innerWidth / window.innerHeight;
+const cameraPersp = new THREE.PerspectiveCamera(
   75,
-  window.innerWidth / window.innerHeight,
+  aspect,
   0.1,
   1000
 );
+
+const cameraOrtho = new THREE.OrthographicCamera(
+  -600 * aspect,
+  600 * aspect,
+  600,
+  -600,
+  0.01,
+  30000
+);
+const camera = cameraPersp;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -101,7 +111,7 @@ const blockMap = {
 };
 
 const loader = new THREE.TextureLoader();
-const sprite = new THREE.TextureLoader().load('./assets/images/disc.png');
+const sprite = new THREE.TextureLoader().load("./assets/images/disc.png");
 
 const materialMap = {
   basic: (color, texture) => {
@@ -112,7 +122,15 @@ const materialMap = {
     }
   },
   line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
-  points: (color) => new THREE.PointsMaterial({ color: color,size: 0.1, sizeAttenuation: true, map: sprite, alphaTest: 0.5, transparent: true }),
+  points: (color) =>
+    new THREE.PointsMaterial({
+      color: color,
+      size: 0.1,
+      sizeAttenuation: true,
+      map: sprite,
+      alphaTest: 0.5,
+      transparent: true,
+    }),
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -136,10 +154,9 @@ function drawBlock(config) {
     block.material.depthTest = false;
     block.material.opacity = 0.5;
     block.material.transparent = true;
-  } 
-  else if (config.nameMaterial === "points")  {
+  } else if (config.nameMaterial === "points") {
     const sizes = [];
-    const positionAttribute = geometry.getAttribute('position')
+    const positionAttribute = geometry.getAttribute("position");
     // console.log(positionAttribute)
     // let newPos = [];
     // if (config.nameBlock === 'cylinder')
@@ -150,20 +167,19 @@ function drawBlock(config) {
     //     var y = Math.sin(j) * config.params.radiusTop;
     //   }
 
-      
     // }
 
-
-
-    for ( let i = 0, l = positionAttribute.count; i < l; i ++ ) {
-      sizes[ i ] = 0.1;
+    for (let i = 0, l = positionAttribute.count; i < l; i++) {
+      sizes[i] = 0.1;
     }
-    geometry.setAttribute( 'position', positionAttribute );
-    geometry.setAttribute( 'customColor', new THREE.Float32BufferAttribute( config.color , 3 ) );
-    geometry.setAttribute( 'size', new THREE.Float32BufferAttribute( sizes, 1) );
-    block = new THREE.Points( geometry, material );
-  }
-   else {
+    geometry.setAttribute("position", positionAttribute);
+    geometry.setAttribute(
+      "customColor",
+      new THREE.Float32BufferAttribute(config.color, 3)
+    );
+    geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
+    block = new THREE.Points(geometry, material);
+  } else {
     block = new THREE.Mesh(geometry, material);
   }
   block.castShadow = true;
@@ -223,7 +239,7 @@ const cylinderConfig = {
     height: 4,
     radialSegments: 64,
     heightSegments: 64,
-    openEnded: false
+    openEnded: false,
   },
   color: 0xffffff,
 };
@@ -268,7 +284,6 @@ const teapotConfig = {
   },
   color: 0xffffff,
 };
-
 
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
@@ -316,9 +331,130 @@ sphere.block.position.y = 1;
 // plane.block.rotation.x = -Math.PI / 2;
 // plane.block.receiveShadow = true;
 
+function onWindowResize() {
+
+  const aspect = window.innerWidth / window.innerHeight;
+
+  cameraPersp.aspect = aspect;
+  cameraPersp.updateProjectionMatrix();
+
+  cameraOrtho.left = cameraOrtho.bottom * aspect;
+  cameraOrtho.right = cameraOrtho.top * aspect;
+  cameraOrtho.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
+
+  render();
+
+}
+
+
 // OrbitControls
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.update();
+const orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
+orbitControl.update();
+
+const transformControl = new TransformControls(camera, renderer.domElement);
+transformControl.addEventListener("change", render);
+transformControl.addEventListener("dragging-changed", function (event) {
+  orbitControl.enabled = !event.value;
+});
+
+transformControl.attach(sphere.block);
+scene.add(transformControl);
+
+window.addEventListener("keydown", function (event) {
+  switch (event.keyCode) {
+    case 81: // Q
+      transformControl.setSpace(
+        transformControl.space === "local" ? "world" : "local"
+      );
+      break;
+
+    case 16: // Shift
+      transformControl.setTranslationSnap(100);
+      transformControl.setRotationSnap(THREE.MathUtils.degToRad(15));
+      transformControl.setScaleSnap(0.25);
+      break;
+
+    case 87: // W
+      transformControl.setMode("translate");
+      break;
+
+    case 69: // E
+      transformControl.setMode("rotate");
+      break;
+
+    case 82: // R
+      transformControl.setMode("scale");
+      break;
+
+    case 67: // C
+      const position = camera.position.clone();
+
+      camera = camera.isPerspectiveCamera ? cameraOrtho : cameraPersp;
+      camera.position.copy(position);
+
+      orbitControl.object = camera;
+      transformControl.camera = camera;
+
+      camera.lookAt(orbitControl.target.x, orbitControl.target.y, orbitControl.target.z);
+      onWindowResize();
+      break;
+
+    case 86: // V
+      const randomFoV = Math.random() + 0.1;
+      const randomZoom = Math.random() + 0.1;
+
+      cameraPersp.fov = randomFoV * 160;
+      cameraOrtho.bottom = -randomFoV * 500;
+      cameraOrtho.top = randomFoV * 500;
+
+      cameraPersp.zoom = randomZoom * 5;
+      cameraOrtho.zoom = randomZoom * 5;
+      onWindowResize();
+      break;
+
+    case 187:
+    case 107: // +, =, num+
+    transformControl.setSize(transformControl.size + 0.1);
+      break;
+
+    case 189:
+    case 109: // -, _, num-
+      transformControl.setSize(Math.max(transformControl.size - 0.1, 0.1));
+      break;
+
+    case 88: // X
+      transformControl.showX = !transformControl.showX;
+      break;
+
+    case 89: // Y
+      transformControl.showY = !transformControl.showY;
+      break;
+
+    case 90: // Z
+      transformControl.showZ = !transformControl.showZ;
+      break;
+
+    case 32: // Spacebar
+      transformControl.enabled = !transformControl.enabled;
+      break;
+
+    case 27: // Esc
+      transformControl.reset();
+      break;
+  }
+});
+
+window.addEventListener("keyup", function (event) {
+  switch (event.keyCode) {
+    case 16: // Shift
+      transformControl.setTranslationSnap(null);
+      transformControl.setRotationSnap(null);
+      transformControl.setScaleSnap(null);
+      break;
+  }
+});
 
 // Đặt camera
 camera.position.set(3, 5, 10);
@@ -358,12 +494,8 @@ lightFolder.addColor(lightdata, "color").onChange(() => {
   );
 });
 
-// Hàm render
-function render(renderer, scene, camera) {
-  renderer.render(scene, camera);
-  requestAnimationFrame(function () {
-    render(renderer, scene, camera);
-  });
+function render() {
+  renderer.render( scene, camera );
 }
 
 window.addEventListener("resize", function () {
@@ -372,11 +504,11 @@ window.addEventListener("resize", function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-const btnFeatures = document.querySelectorAll('.btn-feature');
-btnFeatures.forEach(btn => {
-  btn.addEventListener('click', () => {
-    btn.classList.toggle('active');
+const btnFeatures = document.querySelectorAll(".btn-feature");
+btnFeatures.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    btn.classList.toggle("active");
   });
 });
 
-render(renderer, scene, camera);
+render();
