@@ -1,5 +1,6 @@
 
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
+import {TransformControls } from "./libs/TransformControls.js"
 
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
