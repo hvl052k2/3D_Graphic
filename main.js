@@ -5,12 +5,7 @@ import { TransformControls } from "./libs/TransformControls.js";
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
 const aspect = window.innerWidth / window.innerHeight;
-const cameraPersp = new THREE.PerspectiveCamera(
-  75,
-  aspect,
-  0.1,
-  1000
-);
+const cameraPersp = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
 
 const cameraOrtho = new THREE.OrthographicCamera(
   -600 * aspect,
@@ -110,6 +105,10 @@ const blockMap = {
         params.bNonBlinn
       ),
   },
+  octahedron: {
+    geometry: (params) =>
+      new THREE.OctahedronGeometry(params.radius, params.detail),
+  },
 };
 
 const loader = new THREE.TextureLoader();
@@ -154,7 +153,6 @@ function drawBlock(config) {
     const wireframe = new THREE.WireframeGeometry(geometry);
     block = new THREE.LineSegments(wireframe, material);
     block.material.depthTest = false;
-    block.material.opacity = 0.5;
     block.material.transparent = true;
   } else if (config.nameMaterial === "points") {
     const sizes = [];
@@ -192,7 +190,7 @@ function drawBlock(config) {
 
 const boxConfig = {
   nameBlock: "box",
-  nameMaterial: "points",
+  nameMaterial: "standard",
   params: {
     width: 4,
     height: 4,
@@ -207,11 +205,9 @@ const boxConfig = {
 // Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
-
-  nameMaterial: "points",
-
+  nameMaterial: "standard",
   params: {
-    radius: 2,
+    radius: 2.5,
     widthSegments: 32,
     heightSegments: 32,
   },
@@ -224,8 +220,8 @@ const coneConfig = {
   nameBlock: "cone",
   nameMaterial: "points",
   params: {
-    radius: 2,
-    height: 4,
+    radius: 2.5,
+    height: 5,
     radialSegments: 32,
     heightSegments: 32,
   },
@@ -252,8 +248,8 @@ const torusConfig = {
   nameBlock: "torus",
   nameMaterial: "points",
   params: {
-    radius: 3,
-    tube: 2,
+    radius: 2,
+    tube: 1,
     radialSegments: 32,
     tubularSegments: 32,
   },
@@ -288,13 +284,23 @@ const teapotConfig = {
   color: 0xffffff,
 };
 
+const octahedronConfig = {
+  nameBlock: "octahedron",
+  nameMaterial: "line",
+  params: {
+    radius: 0.3,
+    detail: 0,
+  },
+  color: 0xffffff,
+};
+
 // Ánh sáng
 const ambientLight = new THREE.AmbientLight(0x333333);
-const pointLight = new THREE.PointLight(0xffffff, 1.5);
-pointLight.castShadow = true;
-pointLight.position.set(3, 7, 1);
-scene.add(pointLight);
 scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 1.5);
+pointLight.name = "PointLight";
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
 
 // Tạo background cho scene
 var path = "./assets/images/dark-s_";
@@ -315,135 +321,140 @@ scene.background = reflectionCube;
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
 var currentBlock = drawBlock(boxConfig);
-transformControl.attach(currentBlock.block);
-const itemSeconds = document.querySelectorAll('.item-second');
-itemSeconds.forEach(itemSecond => {
-  itemSecond.addEventListener('click', () => {
+const itemSeconds = document.querySelectorAll(".item-second");
+itemSeconds.forEach((itemSecond) => {
+  itemSecond.addEventListener("click", () => {
     const text = itemSecond.innerText;
-    if(text == "Box"){
-      scene.children.forEach(child => {
-        if(nameObjects.includes(child.name)){
+    if (text == "Box") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
-          scene.remove(obj)
+          scene.remove(obj);
         }
       });
       currentBlock = drawBlock(boxConfig);
-    }
-
-    else if(text == "Sphere"){
-      scene.children.forEach(child => {
-        if(nameObjects.includes(child.name)){
+    } else if (text == "Sphere") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
-          scene.remove(obj)
+          scene.remove(obj);
         }
       });
       currentBlock = drawBlock(sphereConfig);
-    }
-
-    else if(text == "Cone"){
-      scene.children.forEach(child => {
-        if(nameObjects.includes(child.name)){
+    } else if (text == "Cone") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
-          scene.remove(obj)
+          scene.remove(obj);
         }
       });
       currentBlock = drawBlock(coneConfig);
-    }
-
-    else if(text == "Cylinder"){
-      scene.children.forEach(child => {
-        if(nameObjects.includes(child.name)){
+    } else if (text == "Cylinder") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
-          scene.remove(obj)
+          scene.remove(obj);
         }
       });
       currentBlock = drawBlock(cylinderConfig);
-    }
-
-    else if(text == "Torus"){
-      scene.children.forEach(child => {
-        if(nameObjects.includes(child.name)){
+    } else if (text == "Torus") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
-          scene.remove(obj)
+          scene.remove(obj);
         }
       });
       currentBlock = drawBlock(torusConfig);
-    }
-
-    else if(text == "Teapot"){
-      scene.children.forEach(child => {
-        if(nameObjects.includes(child.name)){
+    } else if (text == "Teapot") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj.block);
-          scene.remove(obj)
+          scene.remove(obj);
         }
       });
       currentBlock = drawBlock(teapotConfig);
-      
+    } else if (text == "Point Light") {
+      pointLight.position.set(-3, 5, 3);
+      scene.add(pointLight);
+      scene.add(pointLightHelper);
+    } else if (text == "Remove Light") {
+      scene.remove(pointLight);
+      scene.remove(pointLightHelper);
+      transformControl.detach(pointLight);
+      transformControl.showX = false;
+      transformControl.showY = false;
+      transformControl.showZ = false;
     }
-    transformControl.attach(currentBlock.block);
-  })
-})
+  });
+});
 
 // thanh bar bên trái.
-const element_left = document.querySelectorAll('.item-feature')
+const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
 
-element_left.forEach((e,i)=>{
-  e.onclick=() =>{
-      switch(i){
-        case 0:
+element_left.forEach((e, i) => {
+  e.onclick = () => {
+    switch (i) {
+      case 0:
+        transformControl.attach(currentBlock.block);
+        transformControl.setMode("translate");
+        break;
+      case 1:
+        transformControl.attach(currentBlock.block);
+        transformControl.setMode("rotate");
+        break;
+      case 2:
+        transformControl.attach(currentBlock.block);
+        transformControl.setMode("scale");
+        break;
+      case 3:
+        transformControl.detach(currentBlock.block);
+        if (scene.children.includes(pointLight)) {
+          transformControl.attach(pointLight);
           transformControl.setMode("translate");
-          break;
-        case 1:
-          transformControl.setMode("rotate");
-          break
-        case 2:
-          transformControl.setMode("scale");
-          break
-        case 3:
-          transformControl.setMode("scale");
-          break
-        case 4:
-          transformControl.setMode("scale");
-          break
-      }
-    btnFeatures[i].classList.toggle('active')
-    for(let j = 0; j<5;j++){
-      if (j!=i)
-        btnFeatures[j].classList.remove('active')
+        }
+        break;
+      case 4:
+        transformControl.setMode("scale");
+        break;
     }
-    if (transformControl.showX == false){
-      transformControl.showX = true
-      transformControl.showY = true
-      transformControl.showZ = true
+    btnFeatures[i].classList.toggle("active");
+    for (let j = 0; j < 5; j++) {
+      if (j != i) btnFeatures[j].classList.remove("active");
     }
-    if (!btnFeatures[i].classList.contains('active')){
-      transformControl.showX = false
-      transformControl.showY = false
-      transformControl.showZ = false
+    if (transformControl.showX == false) {
+      transformControl.showX = true;
+      transformControl.showY = true;
+      transformControl.showZ = true;
     }
-  }
-})
+    if (!btnFeatures[i].classList.contains("active")) {
+      transformControl.showX = false;
+      transformControl.showY = false;
+      transformControl.showZ = false;
+    }
+  };
+});
 
 // const plane = drawBlock(planeConfig);
 // plane.block.position.y = -2;
 // plane.block.rotation.x = -Math.PI / 2;
 // plane.block.receiveShadow = true;
 
+// Grid hepler
 const size = 100;
 const divisions = 100;
 
-const gridHelper = new THREE.GridHelper( size, divisions );
-scene.add( gridHelper );
+const gridHelper = new THREE.GridHelper(size, divisions);
+gridHelper.receiveShadow = true;
+scene.add(gridHelper);
 
 function onWindowResize() {
-
   const aspect = window.innerWidth / window.innerHeight;
 
   cameraPersp.aspect = aspect;
@@ -453,23 +464,19 @@ function onWindowResize() {
   cameraOrtho.right = cameraOrtho.top * aspect;
   cameraOrtho.updateProjectionMatrix();
 
-  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
   render();
-
 }
-
 
 // OrbitControls
 const orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
 orbitControl.update();
 
-
 transformControl.addEventListener("change", render);
 transformControl.addEventListener("dragging-changed", function (event) {
   orbitControl.enabled = !event.value;
 });
-
 
 scene.add(transformControl);
 
@@ -508,7 +515,11 @@ window.addEventListener("keydown", function (event) {
       orbitControl.object = camera;
       transformControl.camera = camera;
 
-      camera.lookAt(orbitControl.target.x, orbitControl.target.y, orbitControl.target.z);
+      camera.lookAt(
+        orbitControl.target.x,
+        orbitControl.target.y,
+        orbitControl.target.z
+      );
       onWindowResize();
       break;
 
@@ -527,7 +538,7 @@ window.addEventListener("keydown", function (event) {
 
     case 187:
     case 107: // +, =, num+
-    transformControl.setSize(transformControl.size + 0.1);
+      transformControl.setSize(transformControl.size + 0.1);
       break;
 
     case 189:
@@ -579,8 +590,8 @@ cameraFolder.add(camera.position, "z", -5, 20);
 // GUI đổi màu chất liệu
 const materialData = {
   color: currentBlock.material.color.getHex(),
-  mapsEnabled: true
-}
+  mapsEnabled: true,
+};
 
 const colorFolder = gui.addFolder("Color");
 colorFolder.addColor(materialData, "color").onChange(() => {
@@ -611,13 +622,12 @@ window.addEventListener("resize", function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-
 function render() {
-  renderer.render( scene, camera );
+  renderer.render(scene, camera);
 }
 
-function animate(){
+function animate() {
   requestAnimationFrame(animate);
   render();
 }
-animate()
+animate();
