@@ -146,29 +146,6 @@ const materialMap = {
   },
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Hàm vẽ hình
 function drawBlock(config) {
   const geometry = blockMap[config.nameBlock].geometry(config.params);
@@ -203,34 +180,6 @@ function drawBlock(config) {
   scene.add(block);
   return { geometry, material, block };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const boxConfig = {
   nameBlock: "box",
@@ -526,29 +475,6 @@ element_left.forEach((e, i) => {
   };
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Material
 const material_list = {
   Solid: "standard",
@@ -571,33 +497,6 @@ element_material.forEach((e,i)=>{
     transformControl.attach(currentBlock.block);
   }
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Grid hepler
 const size = 100;
@@ -632,104 +531,6 @@ transformControl.addEventListener("dragging-changed", function (event) {
 });
 
 scene.add(transformControl);
-
-window.addEventListener("keydown", function (event) {
-  switch (event.keyCode) {
-    case 81: // Q
-      transformControl.setSpace(
-        transformControl.space === "local" ? "world" : "local"
-      );
-      break;
-
-    case 16: // Shift
-      transformControl.setTranslationSnap(100);
-      transformControl.setRotationSnap(THREE.MathUtils.degToRad(15));
-      transformControl.setScaleSnap(0.25);
-      break;
-
-    case 87: // W
-      transformControl.setMode("translate");
-      break;
-
-    case 69: // E
-      transformControl.setMode("rotate");
-      break;
-
-    case 82: // R
-      transformControl.setMode("scale");
-      break;
-
-    case 67: // C
-      const position = camera.position.clone();
-
-      camera = camera.isPerspectiveCamera ? cameraOrtho : cameraPersp;
-      camera.position.copy(position);
-
-      orbitControl.object = camera;
-      transformControl.camera = camera;
-
-      camera.lookAt(
-        orbitControl.target.x,
-        orbitControl.target.y,
-        orbitControl.target.z
-      );
-      onWindowResize();
-      break;
-
-    case 86: // V
-      const randomFoV = Math.random() + 0.1;
-      const randomZoom = Math.random() + 0.1;
-
-      cameraPersp.fov = randomFoV * 160;
-      cameraOrtho.bottom = -randomFoV * 500;
-      cameraOrtho.top = randomFoV * 500;
-
-      cameraPersp.zoom = randomZoom * 5;
-      cameraOrtho.zoom = randomZoom * 5;
-      onWindowResize();
-      break;
-
-    case 187:
-    case 107: // +, =, num+
-      transformControl.setSize(transformControl.size + 0.1);
-      break;
-
-    case 189:
-    case 109: // -, _, num-
-      transformControl.setSize(Math.max(transformControl.size - 0.1, 0.1));
-      break;
-
-    case 88: // X
-      transformControl.showX = !transformControl.showX;
-      break;
-
-    case 89: // Y
-      transformControl.showY = !transformControl.showY;
-      break;
-
-    case 90: // Z
-      transformControl.showZ = !transformControl.showZ;
-      break;
-
-    case 32: // Spacebar
-      transformControl.enabled = !transformControl.enabled;
-      break;
-
-    case 27: // Esc
-      transformControl.reset();
-      break;
-  }
-});
-
-window.addEventListener("keyup", function (event) {
-  switch (event.keyCode) {
-    case 16: // Shift
-      transformControl.setTranslationSnap(null);
-      transformControl.setRotationSnap(null);
-      transformControl.setScaleSnap(null);
-      break;
-  }
-});
 
 // Đặt camera
 camera.position.set(3, 5, 10);
