@@ -322,7 +322,7 @@ reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
 // Định nghĩa hàm removeFolder cho dat.GUI
-dat.GUI.prototype.removeFolder = function(name) {
+dat.GUI.prototype.removeFolder = function (name) {
   var folder = this.__folders[name];
   if (!folder) {
     return;
@@ -331,15 +331,19 @@ dat.GUI.prototype.removeFolder = function(name) {
   this.__ul.removeChild(folder.domElement.parentNode);
   delete this.__folders[name];
   this.onResize();
-}
+};
+
+var scale = { x: 1, y: 1, z: 1 };
+var targetScale = { x: 2, y: 2, z: 2 };
 
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
+var animationType;
 var currentBlock = drawBlock(boxConfig);
 const itemSeconds = document.querySelectorAll(".item-second");
 itemSeconds.forEach((itemSecond) => {
   itemSecond.addEventListener("click", () => {
-    const text = itemSecond.innerText;
+    var text = itemSecond.innerText;
     if (text == "Box") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -429,6 +433,13 @@ itemSeconds.forEach((itemSecond) => {
       // ẩn translate light
       element_left[3].classList.add("disable-light");
       btnFeatures[3].classList.remove("active");
+    } else if (
+      text == "Rotation X" ||
+      text == "Rotation Y" ||
+      text == "Remove Animation" ||
+      text == "Composite Animation"
+    ) {
+      animationType = text;
     }
     transformControl.attach(currentBlock.block);
   });
@@ -645,6 +656,16 @@ window.addEventListener("resize", function () {
 });
 
 function render() {
+  if (animationType == "Rotation X") {
+    currentBlock.block.rotation.x += 0.02;
+  } else if (animationType == "Rotation Y") {
+    currentBlock.block.rotation.y += 0.02;
+  } else if (animationType == "Composite Animation") {
+    currentBlock.block.rotation.x += 0.02;
+    currentBlock.block.rotation.y += 0.02;
+  } else if (animationType == "Remove Animation") {
+    return;
+  }
   renderer.render(scene, camera);
 }
 
