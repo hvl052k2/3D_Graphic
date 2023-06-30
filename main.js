@@ -121,6 +121,7 @@ const blockMap = {
 const loader = new THREE.TextureLoader();
 const sprite = new THREE.TextureLoader().load("./assets/images/disc.png");
 
+
 const materialMap = {
   basic: (color, texture) => {
     if (color) {
@@ -266,8 +267,8 @@ const planeConfig = {
   nameBlock: "plane",
   nameMaterial: "phong",
   params: {
-    width: 20,
-    height: 20,
+    width: 200,
+    height: 200,
     widthSegments: 15,
     heightSegments: 15,
   },
@@ -340,7 +341,7 @@ var scale = { x: 1, y: 1, z: 1 };
 var targetScale = { x: 2, y: 2, z: 2 };
 
 // Tạo các hình
-var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
+var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot","soldier"];
 var animationType;
 var currentConfig = boxConfig;
 var currentBlock = drawBlock(currentConfig);
@@ -350,6 +351,7 @@ itemSeconds.forEach((itemSecond) => {
     var text = itemSecond.innerText;
     if (text == "Box") {
       scene.children.forEach((child) => {
+        console.log(child)
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           scene.remove(obj);
@@ -463,11 +465,14 @@ itemSeconds.forEach((itemSecond) => {
           if (object.isMesh) {
             object.castShadow = true;
           }
-          if (object.isGroup) object.scale.set(2, 2, 2);
+          if (object.isGroup) {
+            object.scale.set(2, 2, 2);
+            object.name = 'soldier';
+          }
         });
 
         currentBlock = new THREE.SkeletonHelper(model);
-
+        
         currentBlock.visible = false;
       });
     }
@@ -520,7 +525,7 @@ btnFeatures.forEach((e, i) => {
       transformControl.showY = true;
       transformControl.showZ = true;
     }
-    if (!btnFeatures[i].classList.contains("active")) {
+    if (!btnFeatures[i].classList.contains("active") && i!=4) {
       transformControl.showX = false;
       transformControl.showY = false;
       transformControl.showZ = false;
@@ -624,7 +629,8 @@ window.addEventListener("resize", function () {
 });
 
 function render() {
-  const block_animate = currentBlock.block.clone();
+  
+  // const block_animate = currentBlock.block.clone();
   if (animationType == "Rotation X") {
     currentBlock.block.rotation.x += 0.02;
   } else if (animationType == "Rotation Y") {
@@ -633,7 +639,9 @@ function render() {
     currentBlock.block.rotation.x += 0.02;
     currentBlock.block.rotation.y += 0.02;
   } else if (animationType == "Remove Animation") {
-    currentBlock.block.copy(block_animate);
+    if (block_animate!==undefined){
+      currentBlock.block.copy(block_animate);
+    } 
   }
   renderer.render(scene, camera);
 }
