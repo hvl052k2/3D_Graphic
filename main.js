@@ -629,20 +629,20 @@ window.addEventListener("resize", function () {
 });
 
 function render() {
-  
-  // const block_animate = currentBlock.block.clone();
-  if (animationType == "Rotation X") {
-    currentBlock.block.rotation.x += 0.02;
-  } else if (animationType == "Rotation Y") {
-    currentBlock.block.rotation.y += 0.02;
-  } else if (animationType == "Composite Animation") {
-    currentBlock.block.rotation.x += 0.02;
-    currentBlock.block.rotation.y += 0.02;
-  } else if (animationType == "Remove Animation") {
-    if (block_animate!==undefined){
+  if (currentBlock.isSkeletonHelper){
+    const block_animate = currentBlock.block.clone();
+    if (animationType == "Rotation X") {
+      currentBlock.block.rotation.x += 0.02;
+    } else if (animationType == "Rotation Y") {
+      currentBlock.block.rotation.y += 0.02;
+    } else if (animationType == "Composite Animation") {
+      currentBlock.block.rotation.x += 0.02;
+      currentBlock.block.rotation.y += 0.02;
+    } else if (animationType == "Remove Animation") {
       currentBlock.block.copy(block_animate);
-    } 
+    }
   }
+  
   renderer.render(scene, camera);
 }
 
