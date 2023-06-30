@@ -183,7 +183,11 @@ function drawBlock(config) {
   } else {
     block = new THREE.Mesh(geometry, material);
   }
-  block.castShadow = true;
+  if(config.nameBlock != "plane"){
+    block.castShadow = true;
+  }else{
+    block.receiveShadow = true;
+  }
   block.name = config.nameBlock;
   scene.add(block);
   return { geometry, material, block };
@@ -301,6 +305,7 @@ scene.add(ambientLight);
 
 const pointLight = new THREE.PointLight(0xffffff, 1.5);
 pointLight.name = "PointLight";
+pointLight.castShadow = true;
 const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.3);
 
 // Tạo background cho scene
@@ -555,7 +560,6 @@ element_material.forEach((e, i) => {
 const plane = drawBlock(planeConfig);
 plane.block.position.y = -2
 plane.block.rotation.x = -Math.PI/2;
-plane.block.receiveShadow=true;
 
 // Grid hepler
 // const size = 100;
