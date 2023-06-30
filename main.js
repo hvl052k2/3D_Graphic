@@ -183,7 +183,7 @@ function drawBlock(config) {
 
 const boxConfig = {
   nameBlock: "box",
-  nameMaterial: "standard",
+  nameMaterial: "basic",
   params: {
     width: 4,
     height: 4,
@@ -198,7 +198,7 @@ const boxConfig = {
 // Vẽ hình cầu
 const sphereConfig = {
   nameBlock: "sphere",
-  nameMaterial: "standard",
+  nameMaterial: "basic",
   params: {
     radius: 2.5,
     widthSegments: 32,
@@ -211,7 +211,7 @@ const sphereConfig = {
 // Vẽ hình nón
 const coneConfig = {
   nameBlock: "cone",
-  nameMaterial: "points",
+  nameMaterial: "basic",
   params: {
     radius: 2.5,
     height: 5,
@@ -224,7 +224,7 @@ const coneConfig = {
 // Vẽ hình trụ
 const cylinderConfig = {
   nameBlock: "cylinder",
-  nameMaterial: "points",
+  nameMaterial: "basic",
   params: {
     radiusTop: 2,
     radiusBottom: 2,
@@ -239,7 +239,7 @@ const cylinderConfig = {
 // Vẽ hình bánh xe
 const torusConfig = {
   nameBlock: "torus",
-  nameMaterial: "points",
+  nameMaterial: "basic",
   params: {
     radius: 2,
     tube: 1,
@@ -252,7 +252,7 @@ const torusConfig = {
 // Vẽ mặt phẳng
 const planeConfig = {
   nameBlock: "plane",
-  nameMaterial: "points",
+  nameMaterial: "basic",
   params: {
     width: 20,
     height: 20,
@@ -264,7 +264,7 @@ const planeConfig = {
 
 const teapotConfig = {
   nameBlock: "teapot",
-  nameMaterial: "points",
+  nameMaterial: "basic",
   params: {
     teapotSize: 2,
     tess: 25,
@@ -279,7 +279,7 @@ const teapotConfig = {
 
 const octahedronConfig = {
   nameBlock: "octahedron",
-  nameMaterial: "line",
+  nameMaterial: "basic",
   params: {
     radius: 0.3,
     detail: 0,
@@ -437,7 +437,7 @@ itemSeconds.forEach((itemSecond) => {
 
 var flag_light = false
 // thanh bar bên trái.
-element_left.forEach((e, i) => {
+btnFeatures.forEach((e, i) => {
   e.onclick = () => {
     flag_light = false
     switch (i) {
@@ -451,7 +451,7 @@ element_left.forEach((e, i) => {
         break;
       case 2:
         transformControl.attach(currentBlock.block);
-        transformControl.setMode("scale");
+        transformControl.setMode("scale"); 
         break;
       case 3:
         transformControl.detach(currentBlock.block);
@@ -484,10 +484,10 @@ element_left.forEach((e, i) => {
 
 // Material
 const material_list = {
-  Solid: "standard",
+  Solid: "basic",
   Point: "points",
   Line: "line",
-  Texture: "basic",
+  Texture: "standard",
 };
 element_material.forEach((e, i) => {
   e.onclick = () => {
