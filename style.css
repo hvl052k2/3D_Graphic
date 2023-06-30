@@ -92,11 +92,6 @@ body {
     color: black;
 }
 
-.item.geometry:hover::after {
-    display: block;
-    background-color: darkslateblue;
-}
-
 .feature{
     color: white;
     top: 100px;

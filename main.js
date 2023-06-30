@@ -4,7 +4,6 @@ import { TransformControls } from "./libs/TransformControls.js";
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
 
-
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
@@ -322,6 +321,18 @@ var reflectionCube = new THREE.CubeTextureLoader().load(urls);
 reflectionCube.format = THREE.RGBAFormat;
 scene.background = reflectionCube;
 
+// Định nghĩa hàm removeFolder cho dat.GUI
+dat.GUI.prototype.removeFolder = function(name) {
+  var folder = this.__folders[name];
+  if (!folder) {
+    return;
+  }
+  folder.close();
+  this.__ul.removeChild(folder.domElement.parentNode);
+  delete this.__folders[name];
+  this.onResize();
+}
+
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
 var currentBlock = drawBlock(boxConfig);
@@ -388,20 +399,36 @@ itemSeconds.forEach((itemSecond) => {
       scene.add(pointLight);
       scene.add(pointLightHelper);
 
+      // GUI đổi màu ánh sáng
+      const lightdata = {
+        color: pointLight.color.getHex(),
+        mapsEnabled: true,
+      };
+
+      const lightFolder = gui.addFolder("Light");
+      lightFolder.add(pointLight, "intensity", 0, 10);
+      lightFolder.add(pointLight, "distance", 0, 1000);
+      lightFolder.add(pointLight, "decay", 0, 100);
+      lightFolder.addColor(lightdata, "color").onChange(() => {
+        pointLight.color.setHex(
+          Number(lightdata.color.toString().replace("#", "0x"))
+        );
+      });
+
       // hiện translate light
-      element_left[3].classList.remove('disable-light')
-
-
+      element_left[3].classList.remove("disable-light");
     } else if (text == "Remove Light") {
       scene.remove(pointLight);
       scene.remove(pointLightHelper);
       transformControl.detach(pointLight);
+      gui.removeFolder("Light");
       transformControl.showX = false;
       transformControl.showY = false;
       transformControl.showZ = false;
 
       // ẩn translate light
-      element_left[3].classList.add('disable-light')
+      element_left[3].classList.add("disable-light");
+      btnFeatures[3].classList.remove("active");
     }
     transformControl.attach(currentBlock.block);
   });
@@ -436,7 +463,7 @@ element_left.forEach((e, i) => {
         break;
     }
     btnFeatures[i].classList.toggle("active");
-    for (let j = 0; j < 5; j++) {
+    for (let j = 0; j < 4; j++) {
       if (j != i) btnFeatures[j].classList.remove("active");
     }
     if (transformControl.showX == false) {
@@ -608,22 +635,6 @@ const colorFolder = gui.addFolder("Color");
 colorFolder.addColor(materialData, "color").onChange(() => {
   currentBlock.material.color.setHex(
     Number(materialData.color.toString().replace("#", "0x"))
-  );
-});
-
-// GUI đổi màu ánh sáng
-const lightdata = {
-  color: pointLight.color.getHex(),
-  mapsEnabled: true,
-};
-
-const lightFolder = gui.addFolder("Light");
-lightFolder.add(pointLight, "intensity", 0, 10);
-lightFolder.add(pointLight, "distance", 0, 1000);
-lightFolder.add(pointLight, "decay", 0, 100);
-lightFolder.addColor(lightdata, "color").onChange(() => {
-  pointLight.color.setHex(
-    Number(lightdata.color.toString().replace("#", "0x"))
   );
 });
 
