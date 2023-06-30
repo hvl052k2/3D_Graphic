@@ -1,5 +1,9 @@
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
 import { TransformControls } from "./libs/TransformControls.js";
+// get document
+const element_left = document.querySelectorAll(".item-feature");
+const btnFeatures = document.querySelectorAll(".btn-feature");
+
 
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
@@ -383,6 +387,11 @@ itemSeconds.forEach((itemSecond) => {
       pointLight.position.set(-3, 5, 3);
       scene.add(pointLight);
       scene.add(pointLightHelper);
+
+      // hiện translate light
+      element_left[3].classList.remove('disable-light')
+
+
     } else if (text == "Remove Light") {
       scene.remove(pointLight);
       scene.remove(pointLightHelper);
@@ -390,14 +399,15 @@ itemSeconds.forEach((itemSecond) => {
       transformControl.showX = false;
       transformControl.showY = false;
       transformControl.showZ = false;
+
+      // ẩn translate light
+      element_left[3].classList.add('disable-light')
     }
     transformControl.attach(currentBlock.block);
   });
 });
 
 // thanh bar bên trái.
-const element_left = document.querySelectorAll(".item-feature");
-const btnFeatures = document.querySelectorAll(".btn-feature");
 
 element_left.forEach((e, i) => {
   e.onclick = () => {

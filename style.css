@@ -140,3 +140,8 @@ body {
     align-items: center;
     padding: 10px 5px;
 }
+
+.disable-light {
+    pointer-events: none;
+    opacity: 0.5;
+}
