@@ -1,6 +1,6 @@
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
 import { TransformControls } from "./libs/TransformControls.js";
-import { GLTFLoader } from './libs/GLTFLoader.js';
+import { GLTFLoader } from "./libs/GLTFLoader.js";
 import { Vector3 } from "./libs/three.module.js";
 // get document
 const element_left = document.querySelectorAll(".item-feature");
@@ -146,6 +146,12 @@ const materialMap = {
       return new THREE.MeshStandardMaterial({ map: loader.load(texture) });
     }
   },
+  phong: (color) => {
+    return new THREE.MeshPhongMaterial({
+      color: color,
+      side: THREE.DoubleSide,
+    });
+  },
 };
 
 // Hàm vẽ hình
@@ -254,7 +260,7 @@ const torusConfig = {
 // Vẽ mặt phẳng
 const planeConfig = {
   nameBlock: "plane",
-  nameMaterial: "basic",
+  nameMaterial: "phong",
   params: {
     width: 20,
     height: 20,
@@ -433,8 +439,7 @@ itemSeconds.forEach((itemSecond) => {
       text == "Composite Animation"
     ) {
       animationType = text;
-    }
-    else if (text == "Soldier"){
+    } else if (text == "Soldier") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
@@ -444,34 +449,32 @@ itemSeconds.forEach((itemSecond) => {
 
       // currentConfig = teapotConfig;
       // currentBlock = drawBlock(currentConfig);
-      let model
+      let model;
       const loader_ = new GLTFLoader();
-      loader_.load('./assets/glb/Soldier.glb', function(gltf) {
+      loader_.load("./assets/glb/Soldier.glb", function (gltf) {
         model = gltf.scene;
-        scene.add( model );
-        model.traverse( function ( object ) {
-          if ( object.isMesh ) {
+        scene.add(model);
+        model.traverse(function (object) {
+          if (object.isMesh) {
             object.castShadow = true;
           }
-        if (object.isGroup) object.scale.set(2,2,2);
-        } );
-        
+          if (object.isGroup) object.scale.set(2, 2, 2);
+        });
 
-        currentBlock = new THREE.SkeletonHelper( model );
-        
+        currentBlock = new THREE.SkeletonHelper(model);
+
         currentBlock.visible = false;
-      } )
-
+      });
     }
   });
 });
 
 const audio = document.getElementById("myAudio");
-var flag_light = false
+var flag_light = false;
 // thanh bar bên trái.
 btnFeatures.forEach((e, i) => {
   e.onclick = () => {
-    flag_light = false
+    flag_light = false;
     switch (i) {
       case 0:
         transformControl.attach(currentBlock.block);
@@ -483,7 +486,7 @@ btnFeatures.forEach((e, i) => {
         break;
       case 2:
         transformControl.attach(currentBlock.block);
-        transformControl.setMode("scale"); 
+        transformControl.setMode("scale");
         break;
       case 3:
         transformControl.detach(currentBlock.block);
@@ -501,10 +504,10 @@ btnFeatures.forEach((e, i) => {
         }
         break;
     }
-    
+
     btnFeatures[i].classList.toggle("active");
     for (let j = 0; j < 5; j++) {
-      if (j != i && i!= 4 && j!= 4) btnFeatures[j].classList.remove("active");
+      if (j != i && i != 4 && j != 4) btnFeatures[j].classList.remove("active");
       // console.log(btnFeatures[j])
     }
     if (transformControl.showX == false) {
@@ -539,41 +542,28 @@ element_material.forEach((e, i) => {
     currentBlock.block.position.copy(position_old);
     currentBlock.block.rotation.copy(rotate_old);
     currentBlock.block.scale.copy(scale_old);
-    if(!flag_light){
+    if (!flag_light) {
       transformControl.attach(currentBlock.block);
-    }
-    else{
-      transformControl.attach(pointLight)
+    } else {
+      transformControl.attach(pointLight);
       transformControl.setMode("translate");
     }
-
   };
 });
 
 // vẽ Soldier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const plane = drawBlock(planeConfig);
+plane.block.position.y = -2
+plane.block.rotation.x = -Math.PI/2;
+plane.block.receiveShadow=true;
 
 // Grid hepler
-const size = 100;
-const divisions = 100;
+// const size = 100;
+// const divisions = 100;
 
-const gridHelper = new THREE.GridHelper(size, divisions);
-gridHelper.receiveShadow = true;
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(size, divisions);
+// gridHelper.receiveShadow = true;
+// scene.add(gridHelper);
 
 function onWindowResize() {
   const aspect = window.innerWidth / window.innerHeight;
@@ -639,7 +629,7 @@ function render() {
     currentBlock.block.rotation.x += 0.02;
     currentBlock.block.rotation.y += 0.02;
   } else if (animationType == "Remove Animation") {
-    currentBlock.block.copy(block_animate)
+    currentBlock.block.copy(block_animate);
   }
   renderer.render(scene, camera);
 }
