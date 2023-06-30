@@ -466,6 +466,7 @@ itemSeconds.forEach((itemSecond) => {
   });
 });
 
+const audio = document.getElementById("myAudio");
 var flag_light = false
 // thanh bar bên trái.
 btnFeatures.forEach((e, i) => {
@@ -493,7 +494,11 @@ btnFeatures.forEach((e, i) => {
         flag_light = true;
         break;
       case 4:
-        transformControl.setMode("scale");
+        if (audio.paused) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
         break;
     }
     
