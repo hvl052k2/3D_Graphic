@@ -1,5 +1,7 @@
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
 import { TransformControls } from "./libs/TransformControls.js";
+import { GLTFLoader } from './libs/GLTFLoader.js';
+import { Vector3 } from "./libs/three.module.js";
 // get document
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
@@ -432,6 +434,35 @@ itemSeconds.forEach((itemSecond) => {
     ) {
       animationType = text;
     }
+    else if (text = "Soldier"){
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj);
+        }
+      });
+
+      // currentConfig = teapotConfig;
+      // currentBlock = drawBlock(currentConfig);
+      let model
+      const loader_ = new GLTFLoader();
+      loader_.load('./assets/glb/Soldier.glb', function(gltf) {
+        model = gltf.scene;
+        scene.add( model );
+        model.traverse( function ( object ) {
+          if ( object.isMesh ) {
+            object.castShadow = true;
+          }
+        if (object.isGroup) object.scale.set(2,2,2);
+        } );
+        
+
+        currentBlock = new THREE.SkeletonHelper( model );
+        
+        currentBlock.visible = false;
+      } )
+
+    }
   });
 });
 
@@ -511,6 +542,23 @@ element_material.forEach((e, i) => {
 
   };
 });
+
+// vẽ Soldier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Grid hepler
 const size = 100;
