@@ -4,6 +4,8 @@ import { TransformControls } from "./libs/TransformControls.js";
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
 
+const element_material = document.querySelectorAll('.material .item-second');
+
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
@@ -160,18 +162,6 @@ function drawBlock(config) {
   } else if (config.nameMaterial === "points") {
     const sizes = [];
     const positionAttribute = geometry.getAttribute("position");
-    // console.log(positionAttribute)
-    // let newPos = [];
-    // if (config.nameBlock === 'cylinder')
-    // {
-    //   for (let j = -Math.PI; j < Math.PI;j = j+0.1)
-    //   {
-    //     var x = Math.cos(j) * config.params.radiusTop;
-    //     var y = Math.sin(j) * config.params.radiusTop;
-    //   }
-
-    // }
-
     for (let i = 0, l = positionAttribute.count; i < l; i++) {
       sizes[i] = 0.1;
     }
@@ -331,14 +321,12 @@ dat.GUI.prototype.removeFolder = function (name) {
   this.__ul.removeChild(folder.domElement.parentNode);
   delete this.__folders[name];
   this.onResize();
-};
+}
 
 var scale = { x: 1, y: 1, z: 1 };
 var targetScale = { x: 2, y: 2, z: 2 };
-
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
-var animationType;
 var currentBlock = drawBlock(boxConfig);
 const itemSeconds = document.querySelectorAll(".item-second");
 itemSeconds.forEach((itemSecond) => {
@@ -352,7 +340,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(boxConfig);
+      currentConfig = boxConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Sphere") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -361,7 +350,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(sphereConfig);
+      currentConfig = sphereConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Cone") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -370,7 +360,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(coneConfig);
+      currentConfig = coneConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Cylinder") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -379,7 +370,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(cylinderConfig);
+      currentConfig = cylinderConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Torus") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -388,7 +380,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(torusConfig);
+      currentConfig = torusConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Teapot") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -397,7 +390,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(teapotConfig);
+      currentConfig = teapotConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Point Light") {
       pointLight.position.set(-3, 5, 3);
       scene.add(pointLight);
@@ -446,7 +440,6 @@ itemSeconds.forEach((itemSecond) => {
 });
 
 // thanh bar bên trái.
-
 element_left.forEach((e, i) => {
   e.onclick = () => {
     switch (i) {
@@ -490,10 +483,28 @@ element_left.forEach((e, i) => {
   };
 });
 
-// const plane = drawBlock(planeConfig);
-// plane.block.position.y = -2;
-// plane.block.rotation.x = -Math.PI / 2;
-// plane.block.receiveShadow = true;
+// Material
+const material_list = {
+  Solid: "standard",
+  Point: "points",
+  Line: 'line',
+  Texture: 'basic'
+}
+element_material.forEach((e,i)=>{
+  e.onclick=()=>{
+    const position_old = currentBlock.block.position;
+    const rotate_old = currentBlock.block.rotation;
+    const scale_old = currentBlock.block.scale;
+    scene.remove(scene.getObjectByName(currentBlock.block.name));
+    transformControl.detach(currentBlock.block);
+    currentConfig.nameMaterial = material_list[e.innerHTML];
+    currentBlock = drawBlock(currentConfig)
+    currentBlock.block.position.copy(position_old);
+    currentBlock.block.rotation.copy(rotate_old);
+    currentBlock.block.scale.copy(scale_old);
+    transformControl.attach(currentBlock.block);
+  }
+})
 
 // Grid hepler
 const size = 100;
@@ -528,104 +539,6 @@ transformControl.addEventListener("dragging-changed", function (event) {
 });
 
 scene.add(transformControl);
-
-window.addEventListener("keydown", function (event) {
-  switch (event.keyCode) {
-    case 81: // Q
-      transformControl.setSpace(
-        transformControl.space === "local" ? "world" : "local"
-      );
-      break;
-
-    case 16: // Shift
-      transformControl.setTranslationSnap(100);
-      transformControl.setRotationSnap(THREE.MathUtils.degToRad(15));
-      transformControl.setScaleSnap(0.25);
-      break;
-
-    case 87: // W
-      transformControl.setMode("translate");
-      break;
-
-    case 69: // E
-      transformControl.setMode("rotate");
-      break;
-
-    case 82: // R
-      transformControl.setMode("scale");
-      break;
-
-    case 67: // C
-      const position = camera.position.clone();
-
-      camera = camera.isPerspectiveCamera ? cameraOrtho : cameraPersp;
-      camera.position.copy(position);
-
-      orbitControl.object = camera;
-      transformControl.camera = camera;
-
-      camera.lookAt(
-        orbitControl.target.x,
-        orbitControl.target.y,
-        orbitControl.target.z
-      );
-      onWindowResize();
-      break;
-
-    case 86: // V
-      const randomFoV = Math.random() + 0.1;
-      const randomZoom = Math.random() + 0.1;
-
-      cameraPersp.fov = randomFoV * 160;
-      cameraOrtho.bottom = -randomFoV * 500;
-      cameraOrtho.top = randomFoV * 500;
-
-      cameraPersp.zoom = randomZoom * 5;
-      cameraOrtho.zoom = randomZoom * 5;
-      onWindowResize();
-      break;
-
-    case 187:
-    case 107: // +, =, num+
-      transformControl.setSize(transformControl.size + 0.1);
-      break;
-
-    case 189:
-    case 109: // -, _, num-
-      transformControl.setSize(Math.max(transformControl.size - 0.1, 0.1));
-      break;
-
-    case 88: // X
-      transformControl.showX = !transformControl.showX;
-      break;
-
-    case 89: // Y
-      transformControl.showY = !transformControl.showY;
-      break;
-
-    case 90: // Z
-      transformControl.showZ = !transformControl.showZ;
-      break;
-
-    case 32: // Spacebar
-      transformControl.enabled = !transformControl.enabled;
-      break;
-
-    case 27: // Esc
-      transformControl.reset();
-      break;
-  }
-});
-
-window.addEventListener("keyup", function (event) {
-  switch (event.keyCode) {
-    case 16: // Shift
-      transformControl.setTranslationSnap(null);
-      transformControl.setRotationSnap(null);
-      transformControl.setScaleSnap(null);
-      break;
-  }
-});
 
 // Đặt camera
 camera.position.set(3, 5, 10);
