@@ -4,6 +4,8 @@ import { TransformControls } from "./libs/TransformControls.js";
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
 
+const element_material = document.querySelectorAll('.material .item-second');
+
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
 const gui = new dat.GUI();
@@ -144,6 +146,29 @@ const materialMap = {
   },
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Hàm vẽ hình
 function drawBlock(config) {
   const geometry = blockMap[config.nameBlock].geometry(config.params);
@@ -160,18 +185,6 @@ function drawBlock(config) {
   } else if (config.nameMaterial === "points") {
     const sizes = [];
     const positionAttribute = geometry.getAttribute("position");
-    // console.log(positionAttribute)
-    // let newPos = [];
-    // if (config.nameBlock === 'cylinder')
-    // {
-    //   for (let j = -Math.PI; j < Math.PI;j = j+0.1)
-    //   {
-    //     var x = Math.cos(j) * config.params.radiusTop;
-    //     var y = Math.sin(j) * config.params.radiusTop;
-    //   }
-
-    // }
-
     for (let i = 0, l = positionAttribute.count; i < l; i++) {
       sizes[i] = 0.1;
     }
@@ -190,6 +203,34 @@ function drawBlock(config) {
   scene.add(block);
   return { geometry, material, block };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const boxConfig = {
   nameBlock: "box",
@@ -335,7 +376,8 @@ dat.GUI.prototype.removeFolder = function(name) {
 
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
-var currentBlock = drawBlock(boxConfig);
+var currentConfig = boxConfig;
+var currentBlock = drawBlock(currentConfig);
 const itemSeconds = document.querySelectorAll(".item-second");
 itemSeconds.forEach((itemSecond) => {
   itemSecond.addEventListener("click", () => {
@@ -348,7 +390,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(boxConfig);
+      currentConfig = boxConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Sphere") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -357,7 +400,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(sphereConfig);
+      currentConfig = sphereConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Cone") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -366,7 +410,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(coneConfig);
+      currentConfig = coneConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Cylinder") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -375,7 +420,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(cylinderConfig);
+      currentConfig = cylinderConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Torus") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -384,7 +430,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(torusConfig);
+      currentConfig = torusConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Teapot") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -393,7 +440,8 @@ itemSeconds.forEach((itemSecond) => {
           scene.remove(obj);
         }
       });
-      currentBlock = drawBlock(teapotConfig);
+      currentConfig = teapotConfig;
+      currentBlock = drawBlock(currentConfig);
     } else if (text == "Point Light") {
       pointLight.position.set(-3, 5, 3);
       scene.add(pointLight);
@@ -435,7 +483,6 @@ itemSeconds.forEach((itemSecond) => {
 });
 
 // thanh bar bên trái.
-
 element_left.forEach((e, i) => {
   e.onclick = () => {
     switch (i) {
@@ -479,10 +526,78 @@ element_left.forEach((e, i) => {
   };
 });
 
-// const plane = drawBlock(planeConfig);
-// plane.block.position.y = -2;
-// plane.block.rotation.x = -Math.PI / 2;
-// plane.block.receiveShadow = true;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Material
+const material_list = {
+  Solid: "standard",
+  Point: "points",
+  Line: 'line',
+  Texture: 'basic'
+}
+element_material.forEach((e,i)=>{
+  e.onclick=()=>{
+    const position_old = currentBlock.block.position;
+    const rotate_old = currentBlock.block.rotation;
+    const scale_old = currentBlock.block.scale;
+    scene.remove(scene.getObjectByName(currentBlock.block.name));
+    transformControl.detach(currentBlock.block);
+    currentConfig.nameMaterial = material_list[e.innerHTML];
+    currentBlock = drawBlock(currentConfig)
+    currentBlock.block.position.copy(position_old);
+    currentBlock.block.rotation.copy(rotate_old);
+    currentBlock.block.scale.copy(scale_old);
+    transformControl.attach(currentBlock.block);
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Grid hepler
 const size = 100;
