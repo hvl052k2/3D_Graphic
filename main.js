@@ -435,9 +435,11 @@ itemSeconds.forEach((itemSecond) => {
   });
 });
 
+var flag_light = false
 // thanh bar bên trái.
 element_left.forEach((e, i) => {
   e.onclick = () => {
+    flag_light = false
     switch (i) {
       case 0:
         transformControl.attach(currentBlock.block);
@@ -457,6 +459,7 @@ element_left.forEach((e, i) => {
           transformControl.attach(pointLight);
           transformControl.setMode("translate");
         }
+        flag_light = true;
         break;
       case 4:
         transformControl.setMode("scale");
@@ -498,7 +501,14 @@ element_material.forEach((e, i) => {
     currentBlock.block.position.copy(position_old);
     currentBlock.block.rotation.copy(rotate_old);
     currentBlock.block.scale.copy(scale_old);
-    transformControl.attach(currentBlock.block);
+    if(!flag_light){
+      transformControl.attach(currentBlock.block);
+    }
+    else{
+      transformControl.attach(pointLight)
+      transformControl.setMode("translate");
+    }
+
   };
 });
 
