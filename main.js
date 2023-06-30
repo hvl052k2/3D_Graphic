@@ -4,7 +4,7 @@ import { TransformControls } from "./libs/TransformControls.js";
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
 
-const element_material = document.querySelectorAll('.material .item-second');
+const element_material = document.querySelectorAll(".material .item-second");
 
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
@@ -321,10 +321,11 @@ dat.GUI.prototype.removeFolder = function (name) {
   this.__ul.removeChild(folder.domElement.parentNode);
   delete this.__folders[name];
   this.onResize();
-}
+};
 
 var scale = { x: 1, y: 1, z: 1 };
 var targetScale = { x: 2, y: 2, z: 2 };
+
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
 var animationType;
@@ -338,7 +339,6 @@ itemSeconds.forEach((itemSecond) => {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
-          transformControl.detach(obj.block);
           scene.remove(obj);
         }
       });
@@ -348,7 +348,6 @@ itemSeconds.forEach((itemSecond) => {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
-          transformControl.detach(obj.block);
           scene.remove(obj);
         }
       });
@@ -358,7 +357,6 @@ itemSeconds.forEach((itemSecond) => {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
-          transformControl.detach(obj.block);
           scene.remove(obj);
         }
       });
@@ -368,7 +366,6 @@ itemSeconds.forEach((itemSecond) => {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
-          transformControl.detach(obj.block);
           scene.remove(obj);
         }
       });
@@ -378,7 +375,6 @@ itemSeconds.forEach((itemSecond) => {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
-          transformControl.detach(obj.block);
           scene.remove(obj);
         }
       });
@@ -388,7 +384,6 @@ itemSeconds.forEach((itemSecond) => {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
-          transformControl.detach(obj.block);
           scene.remove(obj);
         }
       });
@@ -437,7 +432,6 @@ itemSeconds.forEach((itemSecond) => {
     ) {
       animationType = text;
     }
-    transformControl.attach(currentBlock.block);
   });
 });
 
@@ -489,24 +483,24 @@ element_left.forEach((e, i) => {
 const material_list = {
   Solid: "standard",
   Point: "points",
-  Line: 'line',
-  Texture: 'basic'
-}
-element_material.forEach((e,i)=>{
-  e.onclick=()=>{
+  Line: "line",
+  Texture: "basic",
+};
+element_material.forEach((e, i) => {
+  e.onclick = () => {
     const position_old = currentBlock.block.position;
     const rotate_old = currentBlock.block.rotation;
     const scale_old = currentBlock.block.scale;
     scene.remove(scene.getObjectByName(currentBlock.block.name));
-    transformControl.detach(currentBlock.block);
+    // transformControl.detach(currentBlock.block);
     currentConfig.nameMaterial = material_list[e.innerHTML];
-    currentBlock = drawBlock(currentConfig)
+    currentBlock = drawBlock(currentConfig);
     currentBlock.block.position.copy(position_old);
     currentBlock.block.rotation.copy(rotate_old);
     currentBlock.block.scale.copy(scale_old);
-    transformControl.attach(currentBlock.block);
-  }
-})
+    // transformControl.attach(currentBlock.block);
+  };
+});
 
 // Grid hepler
 const size = 100;
@@ -579,7 +573,8 @@ function render() {
     currentBlock.block.rotation.x += 0.02;
     currentBlock.block.rotation.y += 0.02;
   } else if (animationType == "Remove Animation") {
-    return;
+    currentBlock.block.rotation.x = 0;
+    currentBlock.block.rotation.y = 0;
   }
   renderer.render(scene, camera);
 }
