@@ -492,13 +492,13 @@ element_material.forEach((e, i) => {
     const rotate_old = currentBlock.block.rotation;
     const scale_old = currentBlock.block.scale;
     scene.remove(scene.getObjectByName(currentBlock.block.name));
-    // transformControl.detach(currentBlock.block);
+    transformControl.detach(currentBlock.block);
     currentConfig.nameMaterial = material_list[e.innerHTML];
     currentBlock = drawBlock(currentConfig);
     currentBlock.block.position.copy(position_old);
     currentBlock.block.rotation.copy(rotate_old);
     currentBlock.block.scale.copy(scale_old);
-    // transformControl.attach(currentBlock.block);
+    transformControl.attach(currentBlock.block);
   };
 });
 
