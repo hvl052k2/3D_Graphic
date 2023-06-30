@@ -327,7 +327,9 @@ var scale = { x: 1, y: 1, z: 1 };
 var targetScale = { x: 2, y: 2, z: 2 };
 // Tạo các hình
 var nameObjects = ["box", "sphere", "cone", "cylinder", "torus", "teapot"];
-var currentBlock = drawBlock(boxConfig);
+var animationType;
+var currentConfig = boxConfig;
+var currentBlock = drawBlock(currentConfig);
 const itemSeconds = document.querySelectorAll(".item-second");
 itemSeconds.forEach((itemSecond) => {
   itemSecond.addEventListener("click", () => {
