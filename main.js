@@ -391,6 +391,7 @@ itemSeconds.forEach((itemSecond) => {
       transformControl.showY = false;
       transformControl.showZ = false;
     }
+    transformControl.attach(currentBlock.block);
   });
 });
 
