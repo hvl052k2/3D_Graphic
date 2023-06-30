@@ -496,9 +496,11 @@ btnFeatures.forEach((e, i) => {
         transformControl.setMode("scale");
         break;
     }
+    
     btnFeatures[i].classList.toggle("active");
-    for (let j = 0; j < 4; j++) {
-      if (j != i) btnFeatures[j].classList.remove("active");
+    for (let j = 0; j < 5; j++) {
+      if (j != i && i!= 4 && j!= 4) btnFeatures[j].classList.remove("active");
+      // console.log(btnFeatures[j])
     }
     if (transformControl.showX == false) {
       transformControl.showX = true;
