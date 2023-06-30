@@ -434,7 +434,7 @@ itemSeconds.forEach((itemSecond) => {
     ) {
       animationType = text;
     }
-    else if (text = "Soldier"){
+    else if (text == "Soldier"){
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
