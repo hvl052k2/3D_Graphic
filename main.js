@@ -520,7 +520,8 @@ btnFeatures.forEach((e, i) => {
       if (j != i && i != 4 && j != 4) btnFeatures[j].classList.remove("active");
       // console.log(btnFeatures[j])
     }
-    if (transformControl.showX == false) {
+    if (transformControl.showX == false && i!=4) {
+      console.log(btnFeatures[i])
       transformControl.showX = true;
       transformControl.showY = true;
       transformControl.showZ = true;
@@ -629,7 +630,7 @@ window.addEventListener("resize", function () {
 });
 
 function render() {
-  if (currentBlock.isSkeletonHelper){
+  if (!currentBlock.isSkeletonHelper){
     const block_animate = currentBlock.block.clone();
     if (animationType == "Rotation X") {
       currentBlock.block.rotation.x += 0.02;
