@@ -133,17 +133,14 @@ const materialMap = {
     }
   },
   line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
-  points: (color) =>
-  
-    new THREE.PointsMaterial({
+  points: (color) => new THREE.PointsMaterial({
       color: color,
       size: 0.15,
       sizeAttenuation: true,
       map: sprite,
       alphaTest: 0.5,
       transparent: true,
-    })
-    ,
+    }),
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -446,17 +443,10 @@ itemSeconds.forEach((itemSecond) => {
       // ẩn translate light
       element_left[3].classList.add("disable-light");
       btnFeatures[3].classList.remove("active");
-    }
-    else if (text == "Remove Animation") {
-      console.log( currentBlock.block)
-      currentBlock.block.rotation.x = 0;
-      currentBlock.block.rotation.y = 0;
-      currentBlock.block.rotation.z = 0;
-      animationType = "Remove Animation"
-    }
-     else if (
+    } else if (
       text == "Rotation X" ||
       text == "Rotation Y" ||
+      text == "Remove Animation" ||
       text == "Composite Animation"
     ) {
       animationType = text;
@@ -647,7 +637,6 @@ window.addEventListener("resize", function () {
 
 function render() {
   if (!currentBlock.isSkeletonHelper){
-    const block_animate = currentBlock.block.clone();
     if (animationType == "Rotation X") {
       currentBlock.block.rotation.x += 0.02;
     } else if (animationType == "Rotation Y") {
@@ -655,6 +644,11 @@ function render() {
     } else if (animationType == "Composite Animation") {
       currentBlock.block.rotation.x += 0.02;
       currentBlock.block.rotation.y += 0.02;
+    } else if (animationType == "Remove Animation") {
+      currentBlock.block.rotation.x =0;
+      currentBlock.block.rotation.y =0;
+      currentBlock.block.rotation.z =0;
+      animationType = "";
     } 
   }
   
