@@ -2,6 +2,8 @@ import { TeapotGeometry } from "./libs/TeapotGeometry.js";
 import { TransformControls } from "./libs/TransformControls.js";
 import { GLTFLoader } from "./libs/GLTFLoader.js";
 import { Vector3 } from "./libs/three.module.js";
+
+
 // get document
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
@@ -132,6 +134,7 @@ const materialMap = {
   },
   line: (color) => new THREE.LineBasicMaterial({ color: color, linewidth: 2 }),
   points: (color) =>
+  
     new THREE.PointsMaterial({
       color: color,
       size: 0.15,
@@ -139,7 +142,8 @@ const materialMap = {
       map: sprite,
       alphaTest: 0.5,
       transparent: true,
-    }),
+    })
+    ,
   standard: (color, texture) => {
     if (color) {
       return new THREE.MeshStandardMaterial({ color: color });
@@ -172,15 +176,18 @@ function drawBlock(config) {
     const sizes = [];
     const positionAttribute = geometry.getAttribute("position");
     for (let i = 0, l = positionAttribute.count; i < l; i++) {
-      sizes[i] = 0.1;
+      sizes[i] = 10;
     }
     geometry.setAttribute("position", positionAttribute);
     geometry.setAttribute(
       "customColor",
-      new THREE.Float32BufferAttribute(config.color, 3)
+      new THREE.Float32BufferAttribute(config.color, 10)
     );
-    geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
-    block = new THREE.Points(geometry, material);
+    geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 10));
+    const wireframe = new THREE.WireframeGeometry(geometry);
+    block = new THREE.Points(wireframe, material);
+    
+    block.material.transparent = true;
   } else {
     block = new THREE.Mesh(geometry, material);
   }
@@ -439,10 +446,17 @@ itemSeconds.forEach((itemSecond) => {
       // ẩn translate light
       element_left[3].classList.add("disable-light");
       btnFeatures[3].classList.remove("active");
-    } else if (
+    }
+    else if (text == "Remove Animation") {
+      console.log( currentBlock.block)
+      currentBlock.block.rotation.x = 0;
+      currentBlock.block.rotation.y = 0;
+      currentBlock.block.rotation.z = 0;
+      animationType = "Remove Animation"
+    }
+     else if (
       text == "Rotation X" ||
       text == "Rotation Y" ||
-      text == "Remove Animation" ||
       text == "Composite Animation"
     ) {
       animationType = text;
@@ -475,7 +489,7 @@ itemSeconds.forEach((itemSecond) => {
         
         currentBlock.visible = false;
       });
-    }
+    } 
   });
 });
 
@@ -629,6 +643,8 @@ window.addEventListener("resize", function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+
+
 function render() {
   if (!currentBlock.isSkeletonHelper){
     const block_animate = currentBlock.block.clone();
@@ -639,9 +655,7 @@ function render() {
     } else if (animationType == "Composite Animation") {
       currentBlock.block.rotation.x += 0.02;
       currentBlock.block.rotation.y += 0.02;
-    } else if (animationType == "Remove Animation") {
-      currentBlock.block.copy(block_animate);
-    }
+    } 
   }
   
   renderer.render(scene, camera);
