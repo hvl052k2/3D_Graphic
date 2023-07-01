@@ -140,3 +140,7 @@ body {
     pointer-events: none;
     opacity: 0.5;
 }
+
+#texture {
+    display: none;
+}
