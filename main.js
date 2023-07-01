@@ -127,7 +127,7 @@ const sprite = new THREE.TextureLoader().load("./assets/images/disc.png");
 
 const materialMap = {
   basic: (color, texture) => {
-    if (color) {
+    if (!texture) {
       return new THREE.MeshBasicMaterial({ color: color });
     } else {
       return new THREE.MeshBasicMaterial({ map: loader.load(texture) });
@@ -144,7 +144,7 @@ const materialMap = {
       transparent: true,
     }),
   standard: (color, texture) => {
-    if (color) {
+    if (!texture) {
       return new THREE.MeshStandardMaterial({ color: color });
     } else {
       return new THREE.MeshStandardMaterial({ map: loader.load(texture) });
@@ -212,6 +212,7 @@ const boxConfig = {
     depthSegments: 15,
   },
   color: 0xffffff,
+  texture:""
 };
 
 // Vẽ hình cầu
@@ -224,7 +225,7 @@ const sphereConfig = {
     heightSegments: 32,
   },
   color: 0xffffff,
-  // texture: "./assets/images/ball.jpg",
+  texture: "",
 };
 
 // Vẽ hình nón
@@ -238,6 +239,7 @@ const coneConfig = {
     heightSegments: 32,
   },
   color: 0xffffff,
+  texture:""
 };
 
 // Vẽ hình trụ
@@ -253,6 +255,7 @@ const cylinderConfig = {
     openEnded: false,
   },
   color: 0xffffff,
+  texture:""
 };
 
 // Vẽ hình bánh xe
@@ -266,6 +269,7 @@ const torusConfig = {
     tubularSegments: 32,
   },
   color: 0xffffff,
+  texture:""
 };
 
 // Vẽ mặt phẳng
@@ -279,6 +283,7 @@ const planeConfig = {
     heightSegments: 15,
   },
   color: 0xffffff,
+  texture:""
 };
 
 const teapotConfig = {
@@ -294,6 +299,7 @@ const teapotConfig = {
     bNonBlinn: true,
   },
   color: 0xffffff,
+  texture:""
 };
 
 const octahedronConfig = {
@@ -304,6 +310,7 @@ const octahedronConfig = {
     detail: 0,
   },
   color: 0xffffff,
+  texture:""
 };
 
 // Ánh sáng
@@ -463,45 +470,45 @@ itemSeconds.forEach((itemSecond) => {
       currentBlock = drawBlock(currentConfig);
       transformControl.attach(currentBlock.block);
     } else if (text == "Soldier") {
-      scene.children.forEach((child) => {
-        if (nameObjects.includes(child.name)) {
-          const obj = scene.getObjectByName(child.name);
-          scene.remove(obj);
-        }
-      });
-      const loader_ = new GLTFLoader();
-      loader_.load("./assets/glb/Soldier.glb", function (gltf) {
-        model = gltf.scene;
-        scene.add(model);
-        animations = gltf.animations;
-        model.traverse(function (object) {
-          if (object.isMesh) {
-            object.castShadow = true;
-          }
-          if (object.isGroup) {
-            object.scale.set(2, 2, 2);
-            object.name = "soldier";
-          }
-        });
+      // scene.children.forEach((child) => {
+      //   if (nameObjects.includes(child.name)) {
+      //     const obj = scene.getObjectByName(child.name);
+      //     scene.remove(obj);
+      //   }
+      // });
+      // const loader_ = new GLTFLoader();
+      // loader_.load("./assets/glb/Soldier.glb", function (gltf) {
+      //   model = gltf.scene;
+      //   scene.add(model);
+      //   animations = gltf.animations;
+      //   model.traverse(function (object) {
+      //     if (object.isMesh) {
+      //       object.castShadow = true;
+      //     }
+      //     if (object.isGroup) {
+      //       object.scale.set(2, 2, 2);
+      //       object.name = "soldier";
+      //     }
+      //   });
 
-        currentBlock = new THREE.SkeletonHelper(model);
-        currentBlock.visible = false;
-        mixer = new THREE.AnimationMixer(model);
-        idleAction = mixer.clipAction(animations[0]);
-        walkAction = mixer.clipAction(animations[3]);
-        runAction = mixer.clipAction(animations[1]);
+      //   currentBlock = new THREE.SkeletonHelper(model);
+      //   currentBlock.visible = false;
+      //   mixer = new THREE.AnimationMixer(model);
+      //   idleAction = mixer.clipAction(animations[0]);
+      //   walkAction = mixer.clipAction(animations[3]);
+      //   runAction = mixer.clipAction(animations[1]);
 
-        itemSeconds.forEach((e) => {
-          if (e.innerHTML == "Rotation X") {
-            e.innerHTML = "Walk animation";
-          } else if (e.innerHTML == "Rotation Y") {
-            e.innerHTML = "Run animation";
-          } else if (e.innerHTML == "Composite Animation") {
-            e.innerHTML = "Idle animation";
-          }
-        });
-        material_contain.classList.add("disable-");
-      });
+      //   itemSeconds.forEach((e) => {
+      //     if (e.innerHTML == "Rotation X") {
+      //       e.innerHTML = "Walk animation";
+      //     } else if (e.innerHTML == "Rotation Y") {
+      //       e.innerHTML = "Run animation";
+      //     } else if (e.innerHTML == "Composite Animation") {
+      //       e.innerHTML = "Idle animation";
+      //     }
+      //   });
+      //   material_contain.classList.add("disable-");
+      // });
     } else if (
       text == "Rotation X" ||
       text == "Rotation Y" ||
@@ -596,26 +603,62 @@ const material_list = {
   Texture: "standard",
 };
 
-element_material.forEach((e) => {
-  e.onclick = () => {
-    console.log(currentBlock);
+function readImage (file) {
+  const reader = new FileReader();
+  reader.onload = function(progressEvent) {
+    var url = reader.result;
+    myImg.innerHTML= url;
+  }
+  reader.readAsDataURL(file);
+}
+
+
+var myImg = document.getElementById('texture')
+const pickerOpts = {
+  types: [
+    {
+      description: "Images",
+      accept: {
+        "image/*": [".png", ".gif", ".jpeg", ".jpg"],
+      },
+    },
+  ],
+  excludeAcceptAllOption: true,
+  multiple: false,
+};
+
+element_material.forEach((e)  => {
+  e.onclick = async ()  => {
     const position_old = currentBlock.block.position;
     const rotate_old = currentBlock.block.rotation;
     const scale_old = currentBlock.block.scale;
-
+    
     scene.remove(scene.getObjectByName(currentBlock.block.name));
     transformControl.detach(currentBlock.block);
     currentConfig.nameMaterial = material_list[e.innerHTML];
-    currentBlock = drawBlock(currentConfig);
-    currentBlock.block.position.copy(position_old);
-    currentBlock.block.rotation.copy(rotate_old);
-    currentBlock.block.scale.copy(scale_old);
-    if (!flag_light) {
-      transformControl.attach(currentBlock.block);
-    } else {
-      transformControl.attach(pointLight);
-      transformControl.setMode("translate");
+    if(e.innerHTML == "Texture"){
+      const [fileHandle] = await window.showOpenFilePicker(pickerOpts)
+      const file = await fileHandle.getFile()
+      await readImage(file)
     }
+    setTimeout(()=>{
+      if(e.innerHTML == "Texture") {
+        currentConfig.texture = myImg.innerHTML;
+      }
+      else{
+        currentConfig.texture = ""
+      }
+      currentBlock = drawBlock(currentConfig);
+      currentBlock.block.position.copy(position_old);
+      currentBlock.block.rotation.copy(rotate_old);
+      currentBlock.block.scale.copy(scale_old);
+      if (!flag_light) {
+        transformControl.attach(currentBlock.block);
+      } else {
+        transformControl.attach(pointLight);
+        transformControl.setMode("translate");
+      }
+    },500)
   };
 });
 
