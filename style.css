@@ -136,7 +136,7 @@ body {
     padding: 10px 5px;
 }
 
-.disable-light {
+.disable {
     pointer-events: none;
     opacity: 0.5;
 }

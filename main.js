@@ -7,8 +7,11 @@ import { Vector3 } from "./libs/three.module.js";
 // get document
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
-
+let model,animations, walkAction, mixer,idleAction,runAction;
+let clock;
+clock = new THREE.Clock();
 const element_material = document.querySelectorAll(".material .item-second");
+const material_contain = document.querySelector(".material");
 
 // Tạo scene, camera và renderer
 const scene = new THREE.Scene();
@@ -352,8 +355,45 @@ var currentBlock = drawBlock(currentConfig);
 const itemSeconds = document.querySelectorAll(".item-second");
 itemSeconds.forEach((itemSecond) => {
   itemSecond.addEventListener("click", () => {
+    animationType="";
     var text = itemSecond.innerText;
-    if (text == "Box") {
+    if (text == "Point Light") {
+      pointLight.position.set(-3, 5, 3);
+      scene.add(pointLight);
+      scene.add(pointLightHelper);
+
+      // GUI đổi màu ánh sáng
+      const lightdata = {
+        color: pointLight.color.getHex(),
+        mapsEnabled: true,
+      };
+
+      const lightFolder = gui.addFolder("Light");
+      lightFolder.add(pointLight, "intensity", 0, 10);
+      lightFolder.add(pointLight, "distance", 0, 1000);
+      lightFolder.add(pointLight, "decay", 0, 100);
+      lightFolder.addColor(lightdata, "color").onChange(() => {
+        pointLight.color.setHex(
+          Number(lightdata.color.toString().replace("#", "0x"))
+        );
+      });
+
+      // hiện translate light
+      element_left[3].classList.remove("disable");
+    } else if (text == "Remove Light") {
+      scene.remove(pointLight);
+      scene.remove(pointLightHelper);
+      transformControl.detach(pointLight);
+      gui.removeFolder("Light");
+      transformControl.showX = false;
+      transformControl.showY = false;
+      transformControl.showZ = false;
+
+      // ẩn translate light
+      element_left[3].classList.add("disable");
+      btnFeatures[3].classList.remove("active");
+    }
+    else if (text == "Box") {
       scene.children.forEach((child) => {
         console.log(child)
         if (nameObjects.includes(child.name)) {
@@ -372,6 +412,7 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = sphereConfig;
       currentBlock = drawBlock(currentConfig);
+      
     } else if (text == "Cone") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
@@ -408,63 +449,19 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = teapotConfig;
       currentBlock = drawBlock(currentConfig);
-    } else if (text == "Point Light") {
-      pointLight.position.set(-3, 5, 3);
-      scene.add(pointLight);
-      scene.add(pointLightHelper);
-
-      // GUI đổi màu ánh sáng
-      const lightdata = {
-        color: pointLight.color.getHex(),
-        mapsEnabled: true,
-      };
-
-      const lightFolder = gui.addFolder("Light");
-      lightFolder.add(pointLight, "intensity", 0, 10);
-      lightFolder.add(pointLight, "distance", 0, 1000);
-      lightFolder.add(pointLight, "decay", 0, 100);
-      lightFolder.addColor(lightdata, "color").onChange(() => {
-        pointLight.color.setHex(
-          Number(lightdata.color.toString().replace("#", "0x"))
-        );
-      });
-
-      // hiện translate light
-      element_left[3].classList.remove("disable-light");
-    } else if (text == "Remove Light") {
-      scene.remove(pointLight);
-      scene.remove(pointLightHelper);
-      transformControl.detach(pointLight);
-      gui.removeFolder("Light");
-      transformControl.showX = false;
-      transformControl.showY = false;
-      transformControl.showZ = false;
-
-      // ẩn translate light
-      element_left[3].classList.add("disable-light");
-      btnFeatures[3].classList.remove("active");
-    } else if (
-      text == "Rotation X" ||
-      text == "Rotation Y" ||
-      text == "Remove Animation" ||
-      text == "Composite Animation"
-    ) {
-      animationType = text;
-    } else if (text == "Soldier") {
+    } 
+    else if (text == "Soldier") {
       scene.children.forEach((child) => {
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           scene.remove(obj);
         }
       });
-
-      // currentConfig = teapotConfig;
-      // currentBlock = drawBlock(currentConfig);
-      let model;
       const loader_ = new GLTFLoader();
       loader_.load("./assets/glb/Soldier.glb", function (gltf) {
         model = gltf.scene;
         scene.add(model);
+        animations = gltf.animations;
         model.traverse(function (object) {
           if (object.isMesh) {
             object.castShadow = true;
@@ -476,10 +473,49 @@ itemSeconds.forEach((itemSecond) => {
         });
 
         currentBlock = new THREE.SkeletonHelper(model);
-        
         currentBlock.visible = false;
+        mixer = new THREE.AnimationMixer( model );
+        idleAction = mixer.clipAction( animations[ 0 ] );
+        walkAction = mixer.clipAction( animations[ 3 ] );
+        runAction = mixer.clipAction( animations[ 1 ] );
+        
+        itemSeconds.forEach((e)=>{
+          if (e.innerHTML == "Rotation X"){
+            e.innerHTML = "Walk animation"
+          }
+          else if (e.innerHTML == "Rotation Y"){
+            e.innerHTML = "Run animation"
+          }
+          else if (e.innerHTML == "Composite Animation"){
+            e.innerHTML = "Idle animation"
+          }
+        })
+        material_contain.classList.add('disable-')
       });
     } 
+    else if (
+      text == "Rotation X" ||
+      text == "Rotation Y" ||
+      text == "Remove Animation" ||
+      text == "Composite Animation" ||  text == "Walk animation" || text == "Run animation" || text == "Idle animation"
+    ) {
+      animationType = text;
+    } 
+    if (currentBlock.name != "soldier" && text!= "Walk animation" && text!= "Run animation" && text!= "Idle animation" && text!= "Remove Animation" ) {
+      itemSeconds.forEach((e)=>{
+        if (e.innerHTML == "Walk animation"){
+          e.innerHTML = "Rotation X"
+        }
+        else if (e.innerHTML == "Run animation" ){
+          e.innerHTML = "Rotation Y"
+        }
+        else if (e.innerHTML == "Idle animation" ){
+          e.innerHTML = "Composite Animation"
+        }
+      })
+    } 
+    
+    
   });
 });
 
@@ -545,26 +581,29 @@ const material_list = {
   Line: "line",
   Texture: "standard",
 };
-element_material.forEach((e, i) => {
-  e.onclick = () => {
-    const position_old = currentBlock.block.position;
-    const rotate_old = currentBlock.block.rotation;
-    const scale_old = currentBlock.block.scale;
-    scene.remove(scene.getObjectByName(currentBlock.block.name));
-    transformControl.detach(currentBlock.block);
-    currentConfig.nameMaterial = material_list[e.innerHTML];
-    currentBlock = drawBlock(currentConfig);
-    currentBlock.block.position.copy(position_old);
-    currentBlock.block.rotation.copy(rotate_old);
-    currentBlock.block.scale.copy(scale_old);
-    if (!flag_light) {
-      transformControl.attach(currentBlock.block);
-    } else {
-      transformControl.attach(pointLight);
-      transformControl.setMode("translate");
-    }
-  };
-});
+
+element_material.forEach((e) => {
+    e.onclick = () => {
+      console.log(currentBlock)
+      const position_old = currentBlock.block.position;
+      const rotate_old = currentBlock.block.rotation;
+      const scale_old = currentBlock.block.scale;
+      
+      scene.remove(scene.getObjectByName(currentBlock.block.name));
+      transformControl.detach(currentBlock.block);
+      currentConfig.nameMaterial = material_list[e.innerHTML];
+      currentBlock = drawBlock(currentConfig);
+      currentBlock.block.position.copy(position_old);
+      currentBlock.block.rotation.copy(rotate_old);
+      currentBlock.block.scale.copy(scale_old);
+      if (!flag_light) {
+        transformControl.attach(currentBlock.block);
+      } else {
+        transformControl.attach(pointLight);
+        transformControl.setMode("translate");
+      }
+    };
+  });
 
 // vẽ Soldier
 const plane = drawBlock(planeConfig);
@@ -635,6 +674,8 @@ window.addEventListener("resize", function () {
 
 
 
+
+
 function render() {
   if (!currentBlock.isSkeletonHelper){
     if (animationType == "Rotation X") {
@@ -651,11 +692,35 @@ function render() {
       animationType = "";
     } 
   }
+  else{
+    if (animationType == "Walk animation"){
+      runAction.stop();
+      idleAction.stop();
+      walkAction.play();
+    }
+    else if (animationType == "Run animation"){
+      walkAction.stop();
+      idleAction.stop();
+      runAction.play();
+    }
+    else if (animationType == "Idle animation") {
+      idleAction.play();
+      walkAction.stop();
+      runAction.stop();
+    }
+    else if (animationType == "Remove Animation"){
+      walkAction.stop();
+      runAction.stop();
+      idleAction.stop();
+    }
+  }
   
   renderer.render(scene, camera);
 }
 
 function animate() {
+  const mixerUpdateDelta = clock.getDelta();
+  if (mixer!==undefined) mixer.update( mixerUpdateDelta );
   requestAnimationFrame(animate);
   render();
 }
