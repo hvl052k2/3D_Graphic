@@ -603,17 +603,19 @@ const material_list = {
   Texture: "standard",
 };
 
+var url;
 function readImage (file) {
   const reader = new FileReader();
   reader.onload = function(progressEvent) {
-    var url = reader.result;
-    myImg.innerHTML= url;
+    url = reader.result;
+    // myImg.innerHTML= url;
   }
   reader.readAsDataURL(file);
 }
 
 
 var myImg = document.getElementById('texture')
+
 const pickerOpts = {
   types: [
     {
@@ -643,7 +645,7 @@ element_material.forEach((e)  => {
     }
     setTimeout(()=>{
       if(e.innerHTML == "Texture") {
-        currentConfig.texture = myImg.innerHTML;
+        currentConfig.texture = url;
       }
       else{
         currentConfig.texture = ""
@@ -664,7 +666,7 @@ element_material.forEach((e)  => {
 
 // vẽ Soldier
 const plane = drawBlock(planeConfig);
-plane.block.position.y = -2;
+plane.block.position.y = -2.5;
 plane.block.rotation.x = -Math.PI / 2;
 
 // Grid hepler
@@ -675,24 +677,42 @@ plane.block.rotation.x = -Math.PI / 2;
 // gridHelper.receiveShadow = true;
 // scene.add(gridHelper);
 
-function onWindowResize() {
-  const aspect = window.innerWidth / window.innerHeight;
+// function onWindowResize() {
+//   const aspect = window.innerWidth / window.innerHeight;
 
-  cameraPersp.aspect = aspect;
-  cameraPersp.updateProjectionMatrix();
+//   cameraPersp.aspect = aspect;
+//   cameraPersp.updateProjectionMatrix();
 
-  cameraOrtho.left = cameraOrtho.bottom * aspect;
-  cameraOrtho.right = cameraOrtho.top * aspect;
-  cameraOrtho.updateProjectionMatrix();
+//   cameraOrtho.left = cameraOrtho.bottom * aspect;
+//   cameraOrtho.right = cameraOrtho.top * aspect;
+//   cameraOrtho.updateProjectionMatrix();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+//   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  render();
-}
+//   render();
+// }
 
 // OrbitControls
+
+
+
+
+// Đặt camera
+camera.position.set(3, 5, 10);
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+const cameraFolder = gui.addFolder("Camera");
+cameraFolder.add(camera.position, "x", -20, 20);
+cameraFolder.add(camera.position, "y", -20, 20);
+cameraFolder.add(camera.position, "z", -20, 20);
+cameraFolder.add(camera, "near",  0.1, 100);
+cameraFolder.add(camera, "far", 10, 2000);
+
 const orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
+orbitControl.enableDamping = true;
+orbitControl.dampingFactor = 0.05;
 orbitControl.update();
+
 
 transformControl.addEventListener("change", render);
 transformControl.addEventListener("dragging-changed", function (event) {
@@ -700,16 +720,6 @@ transformControl.addEventListener("dragging-changed", function (event) {
 });
 
 scene.add(transformControl);
-
-// Đặt camera
-camera.position.set(3, 5, 10);
-camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-const cameraFolder = gui.addFolder("Camera");
-cameraFolder.add(camera.position, "x", -5, 10);
-cameraFolder.add(camera.position, "y", -5, 20);
-cameraFolder.add(camera.position, "z", -5, 20);
-
 // GUI đổi màu chất liệu
 const materialData = {
   color: currentBlock.material.color.getHex(),
@@ -763,7 +773,7 @@ function render() {
       idleAction.stop();
     }
   }
-
+  camera.updateProjectionMatrix();
   renderer.render(scene, camera);
 }
 
@@ -771,6 +781,7 @@ function animate() {
   const mixerUpdateDelta = clock.getDelta();
   if (mixer !== undefined) mixer.update(mixerUpdateDelta);
   requestAnimationFrame(animate);
+  
   render();
 }
 animate();
