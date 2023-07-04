@@ -1,7 +1,7 @@
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
 import { TransformControls } from "./libs/TransformControls.js";
 import { GLTFLoader } from "./libs/GLTFLoader.js";
-import { Vector3 } from "./libs/three.module.js";
+import { Mesh, Vector3 } from "./libs/three.module.js";
 
 // get document
 const element_left = document.querySelectorAll(".item-feature");
@@ -306,7 +306,7 @@ const octahedronConfig = {
   nameBlock: "octahedron",
   nameMaterial: "basic",
   params: {
-    radius: 0.3,
+    radius: 2,
     detail: 0,
   },
   color: 0xffffff,
@@ -361,6 +361,7 @@ var nameObjects = [
   "cylinder",
   "torus",
   "teapot",
+  "octahedron",
   "soldier",
 ];
 var animationType;
@@ -410,7 +411,7 @@ itemSeconds.forEach((itemSecond) => {
       btnFeatures[3].classList.remove("active");
     } else if (text == "Box") {
       scene.children.forEach((child) => {
-        console.log(child);
+    
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           scene.remove(obj);
@@ -469,46 +470,68 @@ itemSeconds.forEach((itemSecond) => {
       currentConfig = teapotConfig;
       currentBlock = drawBlock(currentConfig);
       transformControl.attach(currentBlock.block);
-    } else if (text == "Soldier") {
-      // scene.children.forEach((child) => {
-      //   if (nameObjects.includes(child.name)) {
-      //     const obj = scene.getObjectByName(child.name);
-      //     scene.remove(obj);
-      //   }
-      // });
-      // const loader_ = new GLTFLoader();
-      // loader_.load("./assets/glb/Soldier.glb", function (gltf) {
-      //   model = gltf.scene;
-      //   scene.add(model);
-      //   animations = gltf.animations;
-      //   model.traverse(function (object) {
-      //     if (object.isMesh) {
-      //       object.castShadow = true;
-      //     }
-      //     if (object.isGroup) {
-      //       object.scale.set(2, 2, 2);
-      //       object.name = "soldier";
-      //     }
-      //   });
-
-      //   currentBlock = new THREE.SkeletonHelper(model);
-      //   currentBlock.visible = false;
-      //   mixer = new THREE.AnimationMixer(model);
-      //   idleAction = mixer.clipAction(animations[0]);
-      //   walkAction = mixer.clipAction(animations[3]);
-      //   runAction = mixer.clipAction(animations[1]);
-
-      //   itemSeconds.forEach((e) => {
-      //     if (e.innerHTML == "Rotation X") {
-      //       e.innerHTML = "Walk animation";
-      //     } else if (e.innerHTML == "Rotation Y") {
-      //       e.innerHTML = "Run animation";
-      //     } else if (e.innerHTML == "Composite Animation") {
-      //       e.innerHTML = "Idle animation";
-      //     }
-      //   });
-      //   material_contain.classList.add("disable-");
-      // });
+    } else if (text == "Octahedron") {
+      scene.children.forEach((child) => {
+        if (nameObjects.includes(child.name)) {
+          const obj = scene.getObjectByName(child.name);
+          scene.remove(obj);
+        }
+      });
+      currentConfig = octahedronConfig;
+      currentBlock = drawBlock(currentConfig);
+      transformControl.attach(currentBlock.block);
+    }
+    else if (text == "Soldier") {
+      scene.children.forEach((child) => {
+        
+        if (nameObjects.includes(child.name)) {
+          const obj = scene.getObjectByName(child.name);
+          transformControl.detach(obj)
+          scene.remove(obj);
+        }
+      });
+      const loader_ = new GLTFLoader();
+      
+      loader_.load("./assets/glb/Soldier.glb", function (gltf) {
+        model = gltf.scene;
+        scene.add(model);
+        animations = gltf.animations;
+        model.traverse(function (object) {
+          if (object.isMesh) {
+            object.castShadow = true;
+            object.needsUpdate = true;
+            object.renderOrder = 10; 
+            object.geometry.computeVertexNormals()
+          }
+          if (object.isGroup) {
+            object.scale.set(2, 2, 2);
+            object.name = "soldier";
+          }
+        });
+        
+        const sk = new THREE.SkeletonHelper(model);
+        sk.visible = false;
+        
+        mixer = new THREE.AnimationMixer(model);
+        idleAction = mixer.clipAction(animations[0]);
+        walkAction = mixer.clipAction(animations[3]);
+        runAction = mixer.clipAction(animations[1]);
+        
+        itemSeconds.forEach((e) => {
+          if (e.innerHTML == "Rotation X") {
+            e.innerHTML = "Walk animation";
+          } else if (e.innerHTML == "Rotation Y") {
+            e.innerHTML = "Run animation";
+          } else if (e.innerHTML == "Composite Animation") {
+            e.innerHTML = "Idle animation";
+          }
+        });
+        material_contain.classList.add("disable");
+        currentBlock = sk;
+        currentBlock.block = model;
+        transformControl.attach(currentBlock.block) 
+        
+      });
     } else if (
       text == "Rotation X" ||
       text == "Rotation Y" ||
@@ -579,10 +602,8 @@ btnFeatures.forEach((e, i) => {
     btnFeatures[i].classList.toggle("active");
     for (let j = 0; j < 5; j++) {
       if (j != i && i != 4 && j != 4) btnFeatures[j].classList.remove("active");
-      // console.log(btnFeatures[j])
     }
     if (transformControl.showX == false && i != 4) {
-      console.log(btnFeatures[i]);
       transformControl.showX = true;
       transformControl.showY = true;
       transformControl.showZ = true;
@@ -778,9 +799,9 @@ function render() {
 }
 
 function animate() {
+  requestAnimationFrame(animate);
   const mixerUpdateDelta = clock.getDelta();
   if (mixer !== undefined) mixer.update(mixerUpdateDelta);
-  requestAnimationFrame(animate);
   
   render();
 }
