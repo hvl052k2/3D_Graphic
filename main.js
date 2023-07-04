@@ -544,7 +544,7 @@ itemSeconds.forEach((itemSecond) => {
       animationType = text;
     }
     if (
-      currentBlock.name != "soldier" &&
+      !currentBlock.isSkeletonHelper &&
       text != "Walk animation" &&
       text != "Run animation" &&
       text != "Idle animation" &&
