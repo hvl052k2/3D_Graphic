@@ -7,6 +7,7 @@ import { Mesh, Vector3 } from "./libs/three.module.js";
 const element_left = document.querySelectorAll(".item-feature");
 const btnFeatures = document.querySelectorAll(".btn-feature");
 let model, animations, walkAction, mixer, idleAction, runAction;
+var isLight = false;
 let clock;
 clock = new THREE.Clock();
 const element_material = document.querySelectorAll(".material .item-second");
@@ -542,6 +543,8 @@ itemSeconds.forEach((itemSecond) => {
       text == "Idle animation"
     ) {
       animationType = text;
+    } else if (text == "Light Animation" ){
+      isLight = true;
     }
     if (
       !currentBlock.isSkeletonHelper &&
@@ -774,16 +777,19 @@ function render() {
       currentBlock.block.rotation.y = 0;
       currentBlock.block.rotation.z = 0;
       animationType = "";
+      isLight = false;
     }
   } else {
     if (animationType == "Walk animation") {
       runAction.stop();
       idleAction.stop();
       walkAction.play();
+      currentBlock.block.position.z -= 0.02;
     } else if (animationType == "Run animation") {
       walkAction.stop();
       idleAction.stop();
       runAction.play();
+      currentBlock.block.position.z -= 0.05;
     } else if (animationType == "Idle animation") {
       idleAction.play();
       walkAction.stop();
@@ -792,7 +798,13 @@ function render() {
       walkAction.stop();
       runAction.stop();
       idleAction.stop();
+      isLight = false;
     }
+  }
+  if (isLight){
+    const time = Date.now() * 0.0005;
+    pointLight.position.x = Math.cos( time ) * 10;
+    pointLight.position.z = Math.sin( time ) * 10;
   }
   camera.updateProjectionMatrix();
   renderer.render(scene, camera);
