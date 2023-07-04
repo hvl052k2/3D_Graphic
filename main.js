@@ -798,6 +798,10 @@ function render() {
       walkAction.stop();
       runAction.stop();
       idleAction.stop();
+      currentBlock.block.position.x = 0;
+      currentBlock.block.position.y = 0;
+      currentBlock.block.position.z = 0;
+      animationType = "";
       isLight = false;
     }
   }
