@@ -562,6 +562,7 @@ itemSeconds.forEach((itemSecond) => {
           e.innerHTML = "Composite Animation";
         }
       });
+      material_contain.classList.remove("disable");
     }
   });
 });
