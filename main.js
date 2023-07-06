@@ -420,6 +420,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = boxConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     } else if (text == "Sphere") {
       scene.children.forEach((child) => {
@@ -430,6 +433,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = sphereConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     } else if (text == "Cone") {
       scene.children.forEach((child) => {
@@ -440,6 +446,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = coneConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     } else if (text == "Cylinder") {
       scene.children.forEach((child) => {
@@ -450,6 +459,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = cylinderConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     } else if (text == "Torus") {
       scene.children.forEach((child) => {
@@ -460,6 +472,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = torusConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     } else if (text == "Teapot") {
       scene.children.forEach((child) => {
@@ -470,6 +485,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = teapotConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     } else if (text == "Octahedron") {
       scene.children.forEach((child) => {
@@ -480,6 +498,9 @@ itemSeconds.forEach((itemSecond) => {
       });
       currentConfig = octahedronConfig;
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       transformControl.attach(currentBlock.block);
     }
     else if (text == "Soldier") {
@@ -719,6 +740,7 @@ transformControl.addEventListener("dragging-changed", function (event) {
 });
 
 scene.add(transformControl);
+
 // GUI đổi màu chất liệu
 const materialData = {
   color: currentBlock.material.color.getHex(),
