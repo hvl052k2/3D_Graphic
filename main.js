@@ -205,7 +205,7 @@ const boxConfig = {
     depthSegments: 15,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 // Vẽ hình cầu
@@ -232,7 +232,7 @@ const coneConfig = {
     heightSegments: 32,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 // Vẽ hình trụ
@@ -248,7 +248,7 @@ const cylinderConfig = {
     openEnded: false,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 // Vẽ hình bánh xe
@@ -262,7 +262,7 @@ const torusConfig = {
     tubularSegments: 32,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 // Vẽ mặt phẳng
@@ -276,7 +276,7 @@ const planeConfig = {
     heightSegments: 15,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 const teapotConfig = {
@@ -292,7 +292,7 @@ const teapotConfig = {
     bNonBlinn: true,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 const octahedronConfig = {
@@ -303,7 +303,7 @@ const octahedronConfig = {
     detail: 0,
   },
   color: 0xffffff,
-  texture:""
+  texture: ""
 };
 
 // Ánh sáng
@@ -404,7 +404,7 @@ itemSeconds.forEach((itemSecond) => {
       btnFeatures[3].classList.remove("active");
     } else if (text == "Box") {
       scene.children.forEach((child) => {
-    
+
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           scene.remove(obj);
@@ -497,7 +497,7 @@ itemSeconds.forEach((itemSecond) => {
     }
     else if (text == "Soldier") {
       scene.children.forEach((child) => {
-        
+
         if (nameObjects.includes(child.name)) {
           const obj = scene.getObjectByName(child.name);
           transformControl.detach(obj)
@@ -505,7 +505,7 @@ itemSeconds.forEach((itemSecond) => {
         }
       });
       const loader_ = new GLTFLoader();
-      
+
       loader_.load("./assets/glb/Soldier.glb", function (gltf) {
         model = gltf.scene;
         scene.add(model);
@@ -514,7 +514,7 @@ itemSeconds.forEach((itemSecond) => {
           if (object.isMesh) {
             object.castShadow = true;
             object.needsUpdate = true;
-            object.renderOrder = 10; 
+            object.renderOrder = 10;
             object.geometry.computeVertexNormals()
           }
           if (object.isGroup) {
@@ -522,15 +522,15 @@ itemSeconds.forEach((itemSecond) => {
             object.name = "soldier";
           }
         });
-        
+
         const sk = new THREE.SkeletonHelper(model);
         sk.visible = false;
-        
+
         mixer = new THREE.AnimationMixer(model);
         idleAction = mixer.clipAction(animations[0]);
         walkAction = mixer.clipAction(animations[3]);
         runAction = mixer.clipAction(animations[1]);
-        
+
         itemSeconds.forEach((e) => {
           if (e.innerHTML == "Rotation X") {
             e.innerHTML = "Walk animation";
@@ -543,8 +543,8 @@ itemSeconds.forEach((itemSecond) => {
         material_contain.classList.add("disable");
         currentBlock = sk;
         currentBlock.block = model;
-        transformControl.attach(currentBlock.block) 
-        
+        transformControl.attach(currentBlock.block)
+
       });
     } else if (
       text == "Rotation X" ||
@@ -556,7 +556,7 @@ itemSeconds.forEach((itemSecond) => {
       text == "Idle animation"
     ) {
       animationType = text;
-    } else if (text == "Light Animation" ){
+    } else if (text == "Light Animation") {
       isLight = true;
     }
     if (
@@ -642,9 +642,9 @@ const material_list = {
 };
 
 var url;
-function readImage (file) {
+function readImage(file) {
   const reader = new FileReader();
-  reader.onload = function(progressEvent) {
+  reader.onload = function (progressEvent) {
     url = reader.result;
     // myImg.innerHTML= url;
   }
@@ -667,25 +667,25 @@ const pickerOpts = {
   multiple: false,
 };
 
-element_material.forEach((e)  => {
-  e.onclick = async ()  => {
+element_material.forEach((e) => {
+  e.onclick = async () => {
     const position_old = currentBlock.block.position;
     const rotate_old = currentBlock.block.rotation;
     const scale_old = currentBlock.block.scale;
-    
+
     scene.remove(scene.getObjectByName(currentBlock.block.name));
     transformControl.detach(currentBlock.block);
     currentConfig.nameMaterial = material_list[e.innerHTML];
-    if(e.innerHTML == "Texture"){
+    if (e.innerHTML == "Texture") {
       const [fileHandle] = await window.showOpenFilePicker(pickerOpts)
       const file = await fileHandle.getFile()
       await readImage(file)
     }
-    setTimeout(()=>{
-      if(e.innerHTML == "Texture") {
+    setTimeout(() => {
+      if (e.innerHTML == "Texture") {
         currentConfig.texture = url;
       }
-      else{
+      else {
         currentConfig.texture = ""
       }
       currentBlock = drawBlock(currentConfig);
@@ -701,7 +701,7 @@ element_material.forEach((e)  => {
         transformControl.attach(pointLight);
         transformControl.setMode("translate");
       }
-    },500)
+    }, 500)
   };
 });
 
@@ -720,7 +720,7 @@ cameraFolder.add(camera.position, "x", -20, 20);
 cameraFolder.add(camera.position, "y", -20, 20);
 cameraFolder.add(camera.position, "z", -20, 20);
 cameraFolder.add(camera, "fov", 0, 200);
-cameraFolder.add(camera, "near",  0.1, 100);
+cameraFolder.add(camera, "near", 0.1, 100);
 cameraFolder.add(camera, "far", 10, 2000);
 
 const orbitControl = new THREE.OrbitControls(camera, renderer.domElement);
@@ -797,10 +797,10 @@ function render() {
       isLight = false;
     }
   }
-  if (isLight){
+  if (isLight) {
     const time = Date.now() * 0.0005;
-    pointLight.position.x = Math.cos( time ) * 10;
-    pointLight.position.z = Math.sin( time ) * 10;
+    pointLight.position.x = Math.cos(time) * 10;
+    pointLight.position.z = Math.sin(time) * 10;
   }
   camera.updateProjectionMatrix();
   renderer.render(scene, camera);
@@ -810,7 +810,7 @@ function animate() {
   requestAnimationFrame(animate);
   const mixerUpdateDelta = clock.getDelta();
   if (mixer !== undefined) mixer.update(mixerUpdateDelta);
-  
+
   render();
 }
 animate();
