@@ -581,6 +581,11 @@ itemSeconds.forEach((itemSecond) => {
 });
 
 const audio = document.getElementById("myAudio");
+audio.addEventListener("ended", function() {
+  audio.currentTime = 0;
+  audio.play();
+});
+
 var flag_light = false;
 // thanh bar bên trái.
 btnFeatures.forEach((e, i) => {
