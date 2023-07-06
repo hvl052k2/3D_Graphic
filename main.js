@@ -1,7 +1,6 @@
 import { TeapotGeometry } from "./libs/TeapotGeometry.js";
 import { TransformControls } from "./libs/TransformControls.js";
 import { GLTFLoader } from "./libs/GLTFLoader.js";
-import { Mesh, Vector3 } from "./libs/three.module.js";
 
 // get document
 const element_left = document.querySelectorAll(".item-feature");
@@ -19,14 +18,7 @@ const gui = new dat.GUI();
 const aspect = window.innerWidth / window.innerHeight;
 const cameraPersp = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
 
-const cameraOrtho = new THREE.OrthographicCamera(
-  -600 * aspect,
-  600 * aspect,
-  600,
-  -600,
-  0.01,
-  30000
-);
+
 const camera = cameraPersp;
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -697,6 +689,9 @@ element_material.forEach((e)  => {
         currentConfig.texture = ""
       }
       currentBlock = drawBlock(currentConfig);
+      currentBlock.material.color.setHex(
+        Number(materialData.color.toString().replace("#", "0x"))
+      );
       currentBlock.block.position.copy(position_old);
       currentBlock.block.rotation.copy(rotate_old);
       currentBlock.block.scale.copy(scale_old);
