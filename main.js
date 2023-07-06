@@ -689,47 +689,21 @@ element_material.forEach((e)  => {
   };
 });
 
-// vẽ Soldier
+
 const plane = drawBlock(planeConfig);
 plane.block.position.y = -2.5;
 plane.block.rotation.x = -Math.PI / 2;
-
-// Grid hepler
-// const size = 100;
-// const divisions = 100;
-
-// const gridHelper = new THREE.GridHelper(size, divisions);
-// gridHelper.receiveShadow = true;
-// scene.add(gridHelper);
-
-// function onWindowResize() {
-//   const aspect = window.innerWidth / window.innerHeight;
-
-//   cameraPersp.aspect = aspect;
-//   cameraPersp.updateProjectionMatrix();
-
-//   cameraOrtho.left = cameraOrtho.bottom * aspect;
-//   cameraOrtho.right = cameraOrtho.top * aspect;
-//   cameraOrtho.updateProjectionMatrix();
-
-//   renderer.setSize(window.innerWidth, window.innerHeight);
-
-//   render();
-// }
-
-// OrbitControls
-
-
-
 
 // Đặt camera
 camera.position.set(3, 5, 10);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
+// GUI Camera
 const cameraFolder = gui.addFolder("Camera");
 cameraFolder.add(camera.position, "x", -20, 20);
 cameraFolder.add(camera.position, "y", -20, 20);
 cameraFolder.add(camera.position, "z", -20, 20);
+cameraFolder.add(camera, "fov", 0, 200);
 cameraFolder.add(camera, "near",  0.1, 100);
 cameraFolder.add(camera, "far", 10, 2000);
 
