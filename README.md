@@ -6,7 +6,9 @@ Follow the steps below to run this project on your computer.
 
 Open terminal and run the following command:
 
-`git clone https://github.com/hvl052k2/Final_Project_Computer_Graphic.git`
+```powershell
+git clone https://github.com/hvl052k2/Final_Project_Computer_Graphic.git
+```
 
 ## Step 2: Install Live Server Extension
 
@@ -16,7 +18,7 @@ Open Visual Studio Code and download the Live Server extension.
 
 Open the downloaded "Final_Project_Computer_Graphic" folder by following these steps:
 - Select File -> Open Folder -> Choose the downloaded "Final_Project_Computer_Graphic" folder.
-- Then, open the terminal and run the command: `npm install`
+- Then, open the terminal and run the command: ```powershell npm install```
 
 ## Step 4: Run the Demo
 
