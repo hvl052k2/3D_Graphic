@@ -1,4 +1,4 @@
-# Final_Project_Computer_Graphic
+# 3D_Graphic
 
 Follow the steps below to run this project on your computer.
 
@@ -7,7 +7,7 @@ Follow the steps below to run this project on your computer.
 Open terminal and run the following command:
 
 ```powershell
-git clone https://github.com/hvl052k2/Final_Project_Computer_Graphic.git
+git clone https://github.com/hvl052k2/3D_Graphic.git
 ```
 
 ## Step 2: Install Live Server Extension
@@ -16,8 +16,8 @@ Open Visual Studio Code and download the Live Server extension.
 
 ## Step 3: Open the Project Folder
 
-Open the downloaded "Final_Project_Computer_Graphic" folder by following these steps:
-- Select File -> Open Folder -> Choose the downloaded "Final_Project_Computer_Graphic" folder.
+Open the downloaded "3D_Graphic" folder by following these steps:
+- Select File -> Open Folder -> Choose the downloaded "3D_Graphic" folder.
 - Then, open the terminal and run the command:
   ```powershell
   npm install
